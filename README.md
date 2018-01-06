@@ -1,2 +1,2 @@
 # OSSynthesesC
-Synthèse colaborative pour le cours de système d'éploitation, pour le lanquage C (avec les thread, fork, et serveur)
+Synthèse collaborative pour la partie lanquage C du cours système d'exploitation (avec les thread, fork, et serveur)
