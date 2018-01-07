@@ -51,7 +51,7 @@ Les différents type et objet possibles + glossaire:
   \begin{lstlisting}
     "Hello world!"
   \end{lstlisting}
-  La représentation interne d'une chaîne de caractères est spécifiée. C'est un tableau de char terminé par un 0.
+  La représentation interne d'une chaîne de caractères est spécifiée. C'est un tableau de char terminé par un \guillemotleft{}\textbackslash0\guillemotright{}.
   \begin{lstlisting}
     char s[] = "Hello";
   \end{lstlisting}
@@ -64,8 +64,8 @@ Les différents type et objet possibles + glossaire:
   \item [Tableau] Un tableau est une suite d'objets identiques consécutifs.\newline Exemple:
   \begin{lstlisting}
   #include <stddef.h>
-    size_t size_of_tab = sizeof (int); // type size_t
-    double tab[5] = {12.34, 56.78};
+    size_t size_of_tab = sizeof (long); // type size_t
+    long tab[5] = {12.34, 56.78};
     size_t size_of_tab = sizeof tab / sizeof tab[0];
     // donne le nombre d'éléments dans le tableau tab
   \end{lstlisting}
