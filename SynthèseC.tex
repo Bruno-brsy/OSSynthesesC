@@ -516,7 +516,11 @@ void *thread_1(void *arg) {
     printf("Nous sommes dans le thread.\n");
 
     /* Pour enlever le warning */
-    (void) arg;  // TODO: pourquoi? ça enlève quel warning?
+    (void) arg;  // le warning enlevé est celui-ci:
+    /* format '%s' expects argument of type 'char*',
+    *  but argument 2 has type 'void*' [-Wformat=]
+    *  en gros, il faut reconvertir l'argument
+    *  s'il y en a un pour pas avoir d'erreur de format */
     pthread_exit(NULL);
 }
 
@@ -525,7 +529,8 @@ int main(void) {
 
     printf("Avant la création du thread.\n");
 
-    /* appelle la fonction thread_1 dans la condition du if (pour direct renvoyer une erreur si besoin) */
+    /* appelle la fonction thread_1 dans la condition du if
+    * (pour direct renvoyer une erreur si besoin) */
     if(pthread_create(&thread1, NULL, thread_1, NULL) == -1) {
 	    perror("pthread_create");
       return EXIT_FAILURE;
@@ -679,8 +684,7 @@ Elle prend en paramètre l'adresse de la variable-condition surveillée. Cette f
 int pthread_cond_signal (pthread_cond_t *cond);
 \end{lstlisting}
 \subsubsection{Réveiller plusieurs thread}
-Cette fonction permet de réveiller tous les threads qui surveillent la condition cond.
-Tout comme pthread\textunderscore{}cond\textunderscore{}signal, elle prend en paramètre l'adresse de la variable-condition surveillée.
+Cette fonction permet de réveiller tous les thread qui surveille la condition cond. Tout comme\newline pthread\textunderscore{}cond\textunderscore{}signal, elle prend en paramètre l'adresse de la variable-condition surveillée. 
 \begin{lstlisting}
 int pthread_cond_broadcast (pthread_cond_t *cond);
 \end{lstlisting}
