@@ -28,6 +28,7 @@ morekeywords={size_t}
 % \lstset{language=c}
 \maketitle
 \tableofcontents
+% je mets des TODO: quand j'ai encore quelque chose a faire, car dans mon éditeur de texte je les vois très facielement, si vous n'avez pas fini une section, je vous invite a faire de même, ou alors écrire autre chose, mais que ça puisse ce voir. Si vous voulez des choses en plus, je vous invite également a les mettre dans la section TODO, ce seras plus simple.
 \section{Intro}
 Programme minimal:
 \begin{lstlisting}
@@ -767,20 +768,109 @@ void* threadAlarme (void* arg) {
 }
 \end{lstlisting}
 \href{https://openclassrooms.com/courses/la-programmation-systeme-en-c-sous-unix/les-threads-3#/id/r-1515355}{Lien de l'exemple}
+\section{Gestion des processus}
+Pour cette partie je me suis plus inspiré des slides des tp, j'irais peut-être chercher des exemple sur internet en temps voulu %TODO: moifié quand c'est fait
+\subsection{Création des processus}
+\subsubsection{fork}
+Fork permet de cloner intégralement le processus courant avec un pid différent pour son fils.
+Du coup, fork est la seule fonction qui renvoie deux valeur:
+\begin{enumerate}
+  \item dans le processus fils (le clone), fork renvoie 0
+  \item dans le processus père (l'original), fork renvoie le pid du fils
+\end{enumerate}
+Exemple:
+\begin{lstlisting}
+#include <sys/types.h>
+#include <unistd.h>
+
+pid_tfork();
+\end{lstlisting}
+\subsubsection{getpid()}
+Comment savoir le pid du processus courant?
+\begin{lstlisting}
+  #include <sys/types.h>
+  #include <unistd.h>
+  pid_t getpid(void);
+\end{lstlisting}
+Et pour le pid du père:
+\begin{lstlisting}
+  #include <sys/types.h>
+  #include <unistd.h>
+  pid_t getppid(void);
+\end{lstlisting}
+\subsection{Execution d'un programme depuis un programme C, "systeme calls"}
+Utilise la famille exec\newline
+Lorsqu’un processus fait appel à exec, le processus appelant est remplacé par le programme passé en paramètre. Si cela fonctionne, l’appel à exec ne retourne pas.\newline
+les différentes variantes:
+\begin{lstlisting}
+// permet de passer les paramètres du programme
+// en utilisant une liste d'arguments terminée par NULL
+int execl(const char *program, const char *arg, ...);
+execl("/bin/ls", "/bin/ls", "-l", "-a", NULL );
+
+// cherche le programme dans la variable PATH
+int execlp(const char *program, const char *arg, ...);
+execlp("ls", "ls", "-l", "-a", NULL );
+
+// avec un vecteur pour les paramètres et dois donner le chemin absolu
+int execv(const char *program, const char *argv [ ]);
+char *arguments [4];
+arguments[0] = "/bin/ls";
+arguments[1] = "-l";
+arguments[2] = "-a";
+arguments[3] = NULL;
+execv("/bin/ls", arguments);
+
+
+// avec un vecteur pour les paramètres et dois donner le chemin absolu
+int execvp(const char *program, const char *argv [ ]);
+char *arguments [4];
+arguments[0] = "ls";
+arguments[1] = "-l";
+arguments[2] = "-a";
+arguments[3] = NULL;
+execvp("ls", arguments);
+\end{lstlisting}
+\subsubsection{Attendre la fin d'un processus}
+Attendre la fin d'un processus peut être intéressant quand on attend de ce processus un résultat.\newline
+Utilise la famille exec\newline
+\begin{lstlisting}
+#include<sys/types.h>
+#include<sys/wait.h>
+
+pid_twait(int *status);
+pid_twaitpid(pid_t pid, int *status, int options);
+\end{lstlisting}
+pid\textunderscore{}twait: attent la fin d'un des processus fils, retourne son PID et stocke dans l'entier pointé par status (si status est différent de NULL), le code de retour du processus fils (ce qui est renvoyé par la  fonction main du processus fils).\newline
+pid\textunderscore{}twaitpid: comme pid\textunderscore{}twait mais attend uniquement le processus fils précisé par le paramètre PID.  Le paramètre entier \guillemotleft{}option\guillemotright{} permet de rentre l’appel à waitpid non bloquant avec la constante WNOHANG, si cela n’est pas nécessaire, on utilise la valeur 0.
+\par{}
+Pour savoir si le processus c'est terminé correctement, on utile la macro WIFEXITED(status) qui renvoie vrai si le processus fils s’est terminé normalement.\newline
+Ensuite pour avoir le résultat que le processus a renvoyé (ce que son main a renvoyé), on utilise la macro WEXITSTATUS(status)\newline
+TODO: comment on utilise cette macro? Plus de précision sur celle-ci?
+\subsection{Les pipes}
+Les pipes permettent a deux processus sur la même machine de communiquer de manière unidirictionnels entre eux. (pour pouvoir communiquer entre des machines différentes, on va utiliser des serveurs, mais on verra ça plus tard).\newline
+Il en existe deux type:
+\begin{enumerate}
+  \item anonymes: communication parentale, en famille quoi (père -> fils; fils -> fils)
+  \item nommés: utilisés pour la communication entre deux processus indépendants (pas de lien de parenté direct entre les deux), du coup il faudras le nommé d'où le nom.
+\end{enumerate}
+
+
 \section{TODO:}
 \begin{enumerate}
-  \item fork
-  \item exec
-  \item wait
+  \item Expliquer comment compiler
+  \item fork done
+  \item exec done
+  \item wait done
   \item launch
-  \item pipe
+  \item pipe 
   \item socket
   \item bind
   \item connect
   \item listen
   \item accept
   \item send
-  \item write ?
+  \item write?
   \item recv
   \item shutdown
   \item getpeername
