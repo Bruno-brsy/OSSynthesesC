@@ -52,9 +52,7 @@ Les différents types et objets possibles + glossaire:
   \begin{lstlisting}
     "Hello world!"
   \end{lstlisting}
-  %https://openclassrooms.com/courses/apprenez-a-programmer-en-c/les-chaines-de-caracteres -> ici ils disent que c'est "\0" le caractère de fin de chaine.
-  La représentation interne d'une chaîne de caractères est spécifiée. C'est un tableau de char terminé par un \guillemotleft{}\textbackslash0\guillemotright{} ou \guillemotleft{}0\guillemotright{}, le caractère de fin de chaine.
-
+  La représentation interne d'une chaîne de caractères est spécifiée. C'est un tableau de char terminé par un \guillemotleft{}\textbackslash0\guillemotright{}, le caractère de fin de chaine.
   \begin{lstlisting}
     char s[] = "Hello";
   \end{lstlisting}
@@ -302,7 +300,7 @@ else
     les instructions
   }
 \end{lstlisting}
-\subsection{do..while}
+\subsection{do ... while}
 \begin{lstlisting}
 do
   {
@@ -607,7 +605,7 @@ int pthread_mutex_destroy(pthread_mutex_t *mut);
 \end{lstlisting}
 \subsection{Les conditions (permettent d'attendre un autre thread)}
 Quand un thread est en attente d'une condition, il reste bloqué tant que celle-ci n'est pas réalisée par un autre thread.
-\subsubsection{Initiation} %tu voulais pas dire initialisation ?
+\subsubsection{Initialisation} %tu voulais pas dire initialisation ? si si complètement
 \begin{lstlisting}
   static pthread_cond_t cond_stock = PTHREAD_COND_INITIALIZER;
 \end{lstlisting}
@@ -681,7 +679,7 @@ Elle prend en paramètre l'adresse de la variable-condition surveillée. Cette f
 int pthread_cond_signal (pthread_cond_t *cond);
 \end{lstlisting}
 \subsubsection{Réveiller plusieurs threads}
-Cette fonction permet de réveiller tous les threads qui surveillent la condition cond. Tout comme\newline pthread\textunderscore{}cond\textunderscore{}signal, elle prend en paramètre l'adresse de la variable-condition surveillée.
+Cette fonction permet de réveiller tous les threads qui surveillent la condition cond. Tout comme\newline pthread\textunderscore{}cond\textunderscore{}signal, elle prend en paramètre l'adresse de la variable-condition surveillée. 
 \begin{lstlisting}
 int pthread_cond_broadcast (pthread_cond_t *cond);
 \end{lstlisting}
