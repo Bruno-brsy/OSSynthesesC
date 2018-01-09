@@ -28,7 +28,7 @@ morekeywords={size_t}
 % \lstset{language=c}
 \maketitle
 \tableofcontents
-% je mets des TODO: quand j'ai encore quelque chose a faire, car dans mon éditeur de texte je les vois très facielement, si vous n'avez pas fini une section, je vous invite a faire de même, ou alors écrire autre chose, mais que ça puisse ce voir. Si vous voulez des choses en plus, je vous invite également a les mettre dans la section TODO, ce seras plus simple.
+% je mets des TODO: quand j'ai encore quelque chose a faire, car dans mon éditeur de texte je les vois très facillement, si vous n'avez pas fini une section, je vous invite a faire de même, ou alors écrire autre chose, mais que ça puisse ce voir. Si vous voulez des choses en plus, je vous invite également a les mettre dans la section TODO, ce seras plus simple.
 \section{Intro}
 Programme minimal:
 \begin{lstlisting}
@@ -421,26 +421,22 @@ Permet de « redimensionner » une mémoire allouée dynamiquement (par malloc p
 #include <stdio.h>
 #include <stdlib.h>
 
-int main()
-{
+int main() {
     int * p = malloc(10 * sizeof(int));
 
-    if (p != NULL)
-    {
+    if (p != NULL) {
         /* Sauver l'ancienne valeur de p au cas ou realloc echoue. */
         int * q = p;
         /* Redimensionner le tableau. */
         p = realloc(p, 20 * sizeof(int));
 
-        if (p != NULL)
-        {
+        if (p != NULL) {
             printf("Succes de l'operation.\n");
             p[0] = 1;
             printf("p[0] = %d\n", p[0]);
             free(p);
         }
-        else
-        {
+        else {
             printf("Le tableau n'a pas pu etre redimensionne.\n");
             free(q);
         }
@@ -450,6 +446,35 @@ int main()
 
     return 0;
 }
+\end{lstlisting}
+\subsection{Les structs}
+Les structures permettent de remédier à cette lacune des tableaux, en regroupant des objets (des variables) de types différentes au sein d'une entité repérée par un seul nom de variable. \newline
+Lors de la déclaration de la structure, on indique les champs de la structure, c'est-à-dire le type et le nom des variables qui la composent.
+\begin{lstlisting}
+struct Nom_Structure {
+  type_champ1 Nom_Champ1;
+  type_champ2 Nom_Champ2;
+  type_champ3 Nom_Champ3;
+  type_champ4 Nom_Champ4;
+  type_champ5 Nom_Champ5;
+  ...
+};
+// son utilisation
+struct Nom_Structure Nom_Variable_Structuree;
+\end{lstlisting}
+Exemple:
+\begin{lstlisting}
+struct MaStructure {
+  int Age;
+  char Sexe;
+  char Nom[12];
+  float MoyenneScolaire;
+  struct AutreStructure StructBis;
+/* en considérant que la structure AutreStructure est définie */
+};
+//
+struct MaStructure Pierre, Paul;
+Pierre.Age=42;
 \end{lstlisting}
 \section{Les caractères}
 \subsection{Le jeu de caractères du C}
@@ -466,7 +491,7 @@ S'il faut isoler provisoirement une portion de code, le mieux est de ne pas util
 #endif
 \end{lstlisting}
 Commentez le moins possible. Le principe est de ne commenter que ce qui apporte un supplément d'information. Il est d'usage d'utiliser en priorité l'auto-documentation, c'est à dire un choix judicieux des identificateurs qui fait que le code se lit 'comme un livre'…
-\section{Les threads, ce qui est important quoi}
+\section{Les threads}
 On sait tous ce qu'est un thread, si tu ne sais pas, tu es dans la merde pour ton oral et va d'abord (re)voir ton cours!
 \subsection{Compilation}
 Toutes les fonctions relatives aux threads sont incluses dans le fichier d'en-tête <pthread.h> et dans la bibliothèque libpthread.a (soit -lpthread à la compilation).\newline
@@ -555,7 +580,7 @@ Donc, pour ceux qui n'ont pas suivi:
 \begin{enumerate}
   \item créer une fonction qui va permettre de faire tous les calculs qu'on veut dans les autres threads que le thread principal;
   \item initialiser une variable de type pthread\textunderscore{}t pour chaque thread qu'on veut créer;
-  \item appeler cette fonction (dans un if, souvent, ça permet de gérer les éventuelles erreurs plus facilement);
+  \item appeler cette fonction (dans un if, souvent, ça permet de gérer les éventuelles erreurs plus facillement);
   \item appeler la fonction pthread\textunderscore{}join pour "fusionner" les deux threads (en réalité, attendre le thread en retard sur l'autre)
 \end{enumerate}
 \subsection{Mutex et toute ces belles petites choses}
@@ -822,8 +847,8 @@ int main(void) {
 \end{lstlisting}
 Les variables var\textunderscore{}lcl et var\textunderscore{}glb sont utilisé pour montrer que le père et le fils travail bien sur des variables séparé.\newline
 Output:\newline
-Parent :: var_lcl = [10], var_glb[20]\newline
-Child :: var_lcl = [1], var_glb[1]\newline
+Parent :: var\textunderscore{}lcl = [10], var\textunderscore{}glb[20]\newline
+Child :: var\textunderscore{}lcl = [1], var\textunderscore{}glb[1]\newline
 \href{https://www.thegeekstuff.com/2012/05/c-fork-function/}{Liens~de~l'exemple}\newline
 \href{http://www.commentcamarche.net/faq/10611-que-fait-un-fork}{Fork~pas~a~pas}\newline
 \href{http://pubs.opengroup.org/onlinepubs/9699919799/functions/fork.html#}{Reference~anglais~pour~fork}\newline
@@ -842,7 +867,7 @@ Et pour le pid du père:
 \end{lstlisting}
 \subsection{Execution d'un programme depuis un programme C, "systeme calls"}
 Utilise la famille exec\newline
-Lorsqu’un processus fait appel à exec, le processus appelant est remplacé par le programme passé en paramètre. Si cela fonctionne, l’appel à exec ne retourne pas.\newline
+Lorsqu'un processus fait appel à exec, le processus appelant est remplacé par le programme passé en paramètre. Si cela fonctionne, l'appel à exec ne retourne pas.\newline
 les différentes variantes:
 \begin{lstlisting}
 // permet de passer les paramètres du programme
@@ -885,9 +910,9 @@ pid_t wait(int *status);
 pid_t waitpid(pid_t pid, int *status, int options);
 \end{lstlisting}
 wait: attent la fin d'un des processus fils, retourne son PID et stocke dans l'entier pointé par status (si status est différent de NULL), le code de retour du processus fils (ce qui est renvoyé par la  fonction main du processus fils).\par{}
-waitpid: comme wait mais attend uniquement le processus fils précisé par le paramètre PID.  Le paramètre entier \guillemotleft{}option\guillemotright{} permet de rentre l’appel à waitpid non bloquant avec la constante WNOHANG, si cela n’est pas nécessaire, on utilise la valeur 0.
+waitpid: comme wait mais attend uniquement le processus fils précisé par le paramètre PID.  Le paramètre entier \guillemotleft{}option\guillemotright{} permet de rentre l'appel à waitpid non bloquant avec la constante WNOHANG, si cela n'est pas nécessaire, on utilise la valeur 0.
 \par{}
-Pour savoir si le processus c'est terminé correctement, on utile la macro WIFEXITED(status) qui renvoie vrai si le processus fils s’est terminé normalement.\newline
+Pour savoir si le processus c'est terminé correctement, on utile la macro WIFEXITED(status) qui renvoie vrai si le processus fils s'est terminé normalement.\newline
 
 Ensuite pour avoir le résultat que le processus a renvoyé (ce que son main a renvoyé), on utilise la macro WEXITSTATUS(status).\newpage
 Et voilà, encore bien sur un exemple:
@@ -959,10 +984,10 @@ Il en existe deux type:
 \end{lstlisting}
 C'est quoi tout ça?\newline
 \begin{description}
-  \item L’appel à pipe crée une paire de \guillemotleft{}file descriptors\guillemotright{} stockée dans fd.\newline
-           fd[0] sert à la lecture du pipe et fd[1] sert à l’écriture dans le pipe.
+  \item L'appel à pipe crée une paire de \guillemotleft{}file descriptors\guillemotright{} stockée dans fd.\newline
+           fd[0] sert à la lecture du pipe et fd[1] sert à l'écriture dans le pipe.
   \item La fonction pipe renvoie 0 si elle réussie, autre chose sinon
-  \item Pour établir une communication (unidirectionelle!) à l’aide d’un pipe, il faut que le processus père crée un pipe avant de faire un (ou plusieurs) appel(s) à fork (sinon l'autre processus ne pourras pas connaître l'entré ou la sortie du pipe). Dès lors, après le fork, le processus père et le(s) processus fils peuvent accéder aux pipe en utilisant fd.
+  \item Pour établir une communication (unidirectionelle!) à l'aide d'un pipe, il faut que le processus père crée un pipe avant de faire un (ou plusieurs) appel(s) à fork (sinon l'autre processus ne pourras pas connaître l'entré ou la sortie du pipe). Dès lors, après le fork, le processus père et le(s) processus fils peuvent accéder aux pipe en utilisant fd.
   \item Pour une communication bidirectionelle, il faut bien sur créer deux pipes.
 \end{description}
 Pour écrire dans un tube (ce n'est pas dans les tp, mais ça me semble plutôt utile):
@@ -1121,10 +1146,10 @@ int main(void) {
 \end{lstlisting}
 \href{https://openclassrooms.com/courses/la-programmation-systeme-en-c-sous-unix/les-tubes}{Les pipes (deux exemples), openclassrooms}\newline
 \href{http://www.zeitoun.net/articles/communication-par-tuyau/start}{Très très bon site pour les pipes}
-
-\section{TODO:}
+\newpage
+\section{Les serveurs}
+Les fonction vue et utile:
 \begin{enumerate}
-  \item Expliquer comment compiler
   \item socket
   \item bind
   \item connect
@@ -1137,6 +1162,374 @@ int main(void) {
   \item getpeername
   \item gethostname
   \item gethostbyname
+  \item select
+\end{enumerate}
+\href{http://broux.developpez.com/articles/c/sockets/}{Cours sur developpez.com}
+Les sockets sont des flux de données, permettant à des machines locales ou distantes de communiquer entre elles via des protocoles. Les différents protocoles sont TCP qui est un protocole dit "connecté", et UDP qui est un protocole dit "non connecté".
+\subsection{Les structures utilisés généralement}
+\subsubsection{sockaddr}
+\begin{lstlisting}
+struct sockaddr {
+  unsigned short sa_family; // address family, AF_xxx
+  char sa_data [14];        // 14 bytes of protocol address
+};
+\end{lstlisting}
+\subsubsection{sockaddr\textunderscore{}in}
+Plus facile a utiliser
+\begin{lstlisting}
+struct sockaddr_in {
+  short int sin_family; // Address family
+  unsigned short int sin_port; // Port number
+  struct in_add r sin_addr; // Internet address
+  unsigned char sin_zero[8]; // Same size as struct sockaddr
+};
+\end{lstlisting}
+\subsubsection{in\textunderscore{}addr}
+\begin{lstlisting}
+struct in_addr {
+  unsigned long s_addr; // that's a 32-bit long, or 4 bytes
+};
+\end{lstlisting}
+\subsection{Les conversions}
+\begin{description}
+  \item htons() "Host to Network Short"
+  \item htonl() "Host to Network Long"
+  \item ntohs() "Network to Host Short"
+  \item ntohl() "Network to Host Long"
+\end{description}
+Note: dans le struct sockaddr\textunderscore{}in:\newline
+les champs sin\textunderscore{}addr et sin\textunderscore{}port doivent aussi être convertis.\par
+La fonction inet\textunderscore{}aton qui n permet d'assigner une valeur au champ sin\textunderscore{}addr d'un struct sockaddr\textunderscore{}in à partir d'un string en notation pointée:
+\begin{lstlisting}
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
+int inet_aton(const char *cp, struct in_addr *inp);
+\end{lstlisting}
+Exemple de création et d'initialisation d'un struct sockaddr\textunderscore{}in:
+\begin{lstlisting}
+  struct sockaddr_in my_addr;
+  my_addr.sin_family=AF_INET; // host byte order
+  my_addr.sin_port = htons (MYPORT); // short, network byte order
+  net_aton( "10.12.110.57", &(my_addr.sin_addr));
+  memset (&(my_addr.sin_zero), '\0' ,8); // zero the rest
+\end{lstlisting}
+Variante: fonction inet\textunderscore{}addr(const char* cp), utilisée de la façon suivante:
+\begin{lstlisting}
+  struct sockaddr_in ina;
+  ina.sin_addr.s_addr = inet_addr("10.12.110.57");
+\end{lstlisting}
+Et inet\textunderscore{}ntoa(struct in\textunderscore{}addr in) fait la conversion inverse.
+\subsection{socket}
+Permet d'initialiser le socket
+\begin{lstlisting}
+#include <sys/types.h>
+#include <sys/socket.h>
+
+int socket(int domain, int type, int protocol)
+\end{lstlisting}
+\begin{enumerate}
+  \item le premier paramètre doit être mis à PF\textunderscore{}INET pour les communications sur le réseau.
+  \item le deuxième indique le type de socket. Ici, nous utiliserons SOCK\textunderscore{}STREAM
+  \item le troisième est généralement mis a 0
+\end{enumerate}
+\subsection{bind}
+Bind permet d'associer un socket avec un numéro de port sur la machine locale. Le numéro de port est utilisé par le kernel pour associer les paquets entrants dans la machine vers un socket descriptor particulier.
+\begin{lstlisting}
+#include <sys/types.h>
+#include <sys/socket.h>
+
+int bind(int sockfd, struct sockaddr *my_addr, int addrlen);
+\end{lstlisting}
+\begin{enumerate}
+  \item Le premier paramètre est le socket descriptor renvoyé par
+socket().
+  \item Le second contient le port de l'adresse IP de la machine locale. (soit 0, et l'OS le choisis au hasard soit un nombre compris entre 1024 et 65535 qui n'est pas déjà utilisé).
+  \item Quant au troisième paramètre, on peut le mettre à
+sizeof(struct sockaddr). La constante INADDR\textunderscore{}ANY pour l'adresse IP symbolise l'adresse de la machine locale.
+\end{enumerate}
+Deux appels successifs à bind() peuvent entraîner des délais d'attente (environ 1 minute) et un message d'erreur. On peut s'en débarrasser grâce à la fonction setsockopt():
+\begin{lstlisting}
+  int yes =1;
+  setsockopt(listener, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
+\end{lstlisting}
+\subsection{connect}
+Connect permet de se connecter à un ordinateur distant:
+\begin{lstlisting}
+#include <sys/types.h>
+#include <sys/socket.h>
+
+int connect(int sockfd, struct sockaddr *serv_addr ,int addrlen);
+\end{lstlisting}
+\begin{enumerate}
+  \item Le premier paramètre est le socket descriptor renvoyé par
+socket().
+  \item Le second contient le port de l'adresse IP de la machine distante (et non locale comme dans le bind, sinon, le reste c'est comme le bind). (soit 0, et l'OS le choisis au hasard soit un nombre compris entre 1024 et 65535 qui n'est pas déjà utilisé).
+  \item Quant au troisième paramètre, on peut le mettre à
+sizeof(struct sockaddr). La constante INADDR\textunderscore{}ANY pour l'adresse IP symbolise l'adresse de la machine locale.
+\end{enumerate}
+Un appel à connect() doit toujours être précédé d'un appel à socket(), mais pas forcément d'un appel à bind(). En cas d'absence d'appel à bind(), un numéro de port sera assigné automatiquement à notre socket.
+\subsection{listen}
+Ce system call est utile pour des processus attendant des connexions de l'extérieur. Il permet d'écouter sur le socket si des ordinateurs distants essayent de se connecter sur notre numéro de port. L'acceptation de connexions se fait au moyen de deux system calls consécutifs: listen() et accept().
+\begin{lstlisting}
+int listen(int sockfd, int backlog);
+\end{lstlisting}
+\begin{enumerate}
+  \item Le premier paramètre est le socket descriptor renvoyé par socket()
+  \item le second est le nombre de demandes de connexions maximum dans la file d'attente. Les demandes de connexion sont mises en file d'attente jusqu'au moment où la machine effectue un accept(). Une valeur typique pour backlog est 20.
+\end{enumerate}
+Il convient de faire un bind() avant un listen(), sinon le kernel nous associera un port aléatoire, ce qui posera problème ici (connexions distantes).
+\subsection{accept}
+Des ordinateurs distants vont à présent essayer de se connecter sur notre machine à un port sur lequel nous écoutons (grâce à listen()). Leurs demandes de connexions seront mises en file d'attente jusqu'à ce que nous les acceptions (une à la fois), par accept():
+\begin{lstlisting}
+#include <sys/types.h>
+#include <sys/socket.h>
+
+int accept(int s, struct sockaddr *addr, int *addrlen);
+\end{lstlisting}
+\begin{enumerate}
+  \item Le premier paramètre est le socket descriptor sur lequel on a fait le listen().
+  \item Le second est un pointeur vers un struct sockaddr\textunderscore{}in local qui contiendra des informations sur la machine qui s'est connecté à nous.
+  \item Le troisième paramètre est l'adresse d'une variable locale dont la valeur doit être initialisée à sizeof(struct sockaddr\textunderscore{}in).
+\end{enumerate}
+accept() renvoie un nouveau socket desccriptor qui devra dorénavant être utilisé pour toutes les communications avec la machine qui vient de se connecter.
+\subsection{send}
+Send permet d'envoyer des informations à un ordinateur distant au travers du socket descriptor associé à la connexion établie avec cet ordinateur
+\begin{lstlisting}
+int send(int sackfd, const void *msg, int len, int flag);
+\end{lstlisting}
+\begin{enumerate}
+  \item Le premier paramètre est le socket descriptor renvoyé par socket()
+  \item Le deuxième paramètre contient l'information à envoyer.
+  \item Le troisième contient sa longueur.
+  \item Le quatrième peut être mis à 0 
+\end{enumerate}
+send() renvoie le nombre de bytes envoyés. En fait, send() envoie le maximum de données possible, mais cela peut encore être inférieur à len. Il faudra alors ré-envoyer le reste.
+\subsection{recv}
+Recv permet de recevoir des informations envoyées par un ordinateur distant au travers du socket descriptor associé à la connexion établie avec cet ordinateur:
+\begin{lstlisting}
+int recv(int sockfd, void *buf, int len, unsigned int flags);
+\end{lstlisting}
+\begin{enumerate}
+  \item Le premier paramètre est le socket descriptor renvoyé par socket()
+  \item Le deuxième paramètre est un vecteur qui contiendra l'information lue.
+  \item Le troisième contient sa longueur.
+  \item Le quatrième peut être mis à 0 
+\end{enumerate}
+Le comportement par défaut de recv() est d'attendre jusqu'à ce qu'une information soit disponible (lecture bloquante).\par
+recv() renvoie le nombre de bytes reçus ou 0 si la machine distante a déjà fermé son socket (à l'aide de close(int sockfd)).
+\subsection{shutdown}
+Shutdown peut être utilisé pour fermer une connexion sur un socket descriptor. Cela interdit toute lecture ou écriture ultérieure sur ce socket.
+\begin{lstlisting}
+int shutdown(int sockfd, int how);
+\end{lstlisting}
+\begin{enumerate}
+  \item Le premier paramètre est le socket descriptor renvoyé par socket()
+  \item Le second paramètre peut être mis à 0 (réceptions interdites), 1 (envois interdits), ou 2 (envois et réceptions interdits).
+\end{enumerate}
+Un shutdown() doit toujours être suivi d'un close(int sockfd).
+\subsection{getpeername}
+Getpeername() permet de savoir qui est à l'autre bout d'une connexion par socket
+\begin{lstlisting}
+#include <sys/socket.h>
+
+int getpeername(int sockfd, struct sockaddr $addr, int *addrlen);
+\end{lstlisting}
+\begin{enumerate}
+  \item Le premier paramètre est le socket descriptor renvoyé par socket()
+  \item Le second paramètre contiendra les informations concernant la machine distante.
+  \item Le troisième paramètre contiendra la taille de ces informations
+\end{enumerate}
+Une fois l'adresse obtenue, les fonctions inet\textunderscore{}ntoa() et gethostbyaddr() permettent de l'afficher aisément ou d'obtenir des informations supplémentaires.
+\subsection{gethostname}
+Gethostname permet de connaître le nom de la machine locale.
+\begin{lstlisting}
+#include <unistd.h>
+
+int gethostname(char *hostname, size_t size);
+\end{lstlisting}
+\subsection{gethostbyname}
+Cette fonction prend en paramètre un nom de machine et renvoie son adresse IP:
+\begin{lstlisting}
+#include<netdb.h>
+
+struct hostent *gethostbyname(const char *name );
+\end{lstlisting}
+Le struct renvoyé est le suivant:
+\begin{lstlisting}
+struct hostent {
+    char *h_name;
+    char *h_aliases;
+    int h_addrtype;
+    int h_length;
+    char *h_addr_list; // vecteur d'adresses
+  };
+  #define h_addr h_addr_list[0]
+\end{lstlisting}
+\newpage
+\subsubsection{Exemple sans select, correctif de tp}
+\begin{lstlisting}
+// Serveur.c
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <errno.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <sys/wait.h>
+#include <signal.h>
+
+#define MYPORT 3490    // the port users will be connecting to
+
+#define BACKLOG 10     // how many pending connections queue will hold
+
+void sigchld_handler(int s) {
+    while(wait(NULL) > 0);
+}
+
+int main(void) {
+    int sockfd, new_fd;  // listen on sock_fd, new connection on new_fd
+    struct sockaddr_in my_addr;    // my address information
+    struct sockaddr_in their_addr; // connector's address information
+    socklen_t sin_size;
+    struct sigaction sa;
+    int yes = 1;
+
+    if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+        perror("socket");
+        exit(1);
+    }
+
+    if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1) {
+        perror("setsockopt");
+        exit(1);
+    }
+    
+    my_addr.sin_family = AF_INET;         // host byte order
+    my_addr.sin_port = htons(MYPORT);     // short, network byte order
+    my_addr.sin_addr.s_addr = INADDR_ANY; // automatically fill with my IP
+    memset(&(my_addr.sin_zero), '\0', 8); // zero the rest of the struct
+
+    if (bind(sockfd, (struct sockaddr *)&my_addr, sizeof(struct sockaddr)) == -1) {
+        perror("bind");
+        exit(1);
+    }
+
+    if (listen(sockfd, BACKLOG) == -1) {
+        perror("listen");
+        exit(1);
+    }
+
+    sa.sa_handler = sigchld_handler; // reap all dead processes
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = SA_RESTART;
+    if (sigaction(SIGCHLD, &sa, NULL) == -1) {
+        perror("sigaction");
+        exit(1);
+    }
+
+    while(1) {  // main accept() loop
+        sin_size = sizeof(struct sockaddr_in);
+        if ((new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &sin_size)) == -1) {
+            perror("accept");
+            continue;
+        }
+        printf("server: got connection from %s\n",inet_ntoa(their_addr.sin_addr));
+        if (!fork()) { // this is the child process
+            close(sockfd); // child doesn't need the listener
+            if (send(new_fd, "Hello, world!\n", 14, 0) == -1)
+                perror("send");
+            close(new_fd);
+            exit(0);
+        }
+        close(new_fd);  // parent doesn't need this
+    }
+
+    return 0;
+}
+\end{lstlisting}
+client.c
+\begin{lstlisting}
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <errno.h>
+#include <string.h>
+#include <netdb.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+
+#define PORT 3490 // the port client will be connecting to 
+
+#define MAXDATASIZE 100 // max number of bytes we can get at once 
+
+int main(int argc, char *argv[])
+{
+    int sockfd, numbytes;  
+    char buf[MAXDATASIZE];
+    struct hostent *he;
+    struct sockaddr_in their_addr; // connector's address information 
+
+    if (argc != 2) {
+        fprintf(stderr,"usage: client hostname\n");
+        exit(1);
+    }
+
+    if ((he=gethostbyname(argv[1])) == NULL) {  // get the host info 
+        perror("gethostbyname");
+        exit(1);
+    }
+
+    if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+        perror("socket");
+        exit(1);
+    }
+
+    their_addr.sin_family = AF_INET;    // host byte order 
+    their_addr.sin_port = htons(PORT);  // short, network byte order 
+    their_addr.sin_addr = *((struct in_addr *)he->h_addr);
+    memset(&(their_addr.sin_zero), '\0', 8);  // zero the rest of the struct 
+
+    if (connect(sockfd, (struct sockaddr *)&their_addr, sizeof(struct sockaddr)) == -1) {
+        perror("connect");
+        exit(1);
+    }
+
+    if ((numbytes=recv(sockfd, buf, MAXDATASIZE-1, 0)) == -1) {
+        perror("recv");
+        exit(1);
+    }
+
+    buf[numbytes] = '\0';
+
+    printf("Received: %s",buf);
+
+    close(sockfd);
+
+    return 0;
+}
+\end{lstlisting}
+\subsection{select}
+\section{TODO:}
+\begin{enumerate}
+  \item Expliquer comment compiler
+  \item socket done
+  \item bind done
+  \item connect done
+  \item listen done
+  \item accept done
+  \item send done
+  \item write ?
+  \item recv done
+  \item shutdown done
+  \item getpeername done
+  \item gethostname done
+  \item gethostbyname done
   \item select
 \end{enumerate}
 Comme vous pouvez le voir, il me reste beaucoup moins à faire en fait, il ne me reste plus que les serveurs et la compilation d'un programme. La compilation d'un programme ne risque pas de tomber a l'examen, mais les serveurs, c'est possible, donc c'est sur quoi je me pencherais mardi 9/01.
