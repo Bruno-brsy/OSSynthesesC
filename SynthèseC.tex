@@ -28,6 +28,7 @@ morekeywords={size_t}
 % \lstset{language=c}
 \maketitle
 \tableofcontents
+% je mets des TODO: quand j'ai encore quelque chose a faire, car dans mon éditeur de texte je les vois très facielement, si vous n'avez pas fini une section, je vous invite a faire de même, ou alors écrire autre chose, mais que ça puisse ce voir. Si vous voulez des choses en plus, je vous invite également a les mettre dans la section TODO, ce seras plus simple.
 \section{Intro}
 Programme minimal:
 \begin{lstlisting}
@@ -460,7 +461,7 @@ int main()
 \subsection{Le jeu de caractères du C}
 Voir \href{http://emmanuel-delahaye.developpez.com/tutoriels/c/bonnes-pratiques-codage-c/#LI-A}{Bonne pratique de codage en C}
 \subsection{Commentaire}
-Préférer les commentaires en dessous ou au dessus d'une ligne plutot que en bout de ligne, car souvent ça rend la ligne trop longue. \newline
+Préférer les commentaires en dessous ou au dessus d'une ligne plutôt que en bout de ligne, car souvent ça rend la ligne trop longue. \newline
 Pour les commentaires de plusieurs lignes, utiliser plutôt /* */.\newline
 S'il faut isoler provisoirement une portion de code, le mieux est de ne pas utiliser les commentaires (il pourrait y avoir des commentaires imbriqués), mais plutôt les directives du préprocesseur: \#ifdef .. \#endif ou \#if .. \#endif
 \begin{lstlisting}
@@ -767,20 +768,375 @@ void* threadAlarme (void* arg) {
 }
 \end{lstlisting}
 \href{https://openclassrooms.com/courses/la-programmation-systeme-en-c-sous-unix/les-threads-3#/id/r-1515355}{Lien de l'exemple}
+\section{Gestion des processus}
+Pour cette partie je me suis plus inspiré des slides des tp.
+\subsection{Création des processus}
+\subsubsection{fork}
+Fork permet de cloner intégralement le processus courant avec un pid différent pour son fils.
+Du coup, fork est la seule fonction qui renvoie deux valeur:
+\begin{enumerate}
+  \item dans le processus fils (le clone), fork renvoie 0
+  \item dans le processus père (l'original), fork renvoie le pid du fils
+\end{enumerate}
+Exemple:
+\begin{lstlisting}
+#include <sys/types.h>
+#include <unistd.h>
+
+pid_t fork();
+// renvoie 0 si c'est l'enfant
+// < 0 si il y a une erreur dans le fork
+// > 0 si c'est le parent
+\end{lstlisting}
+\newpage
+\textbf{Exemple complet:}
+\begin{lstlisting}
+#include <unistd.h>
+#include <sys/types.h>
+#include <errno.h>
+#include <stdio.h>
+#include <sys/wait.h>
+#include <stdlib.h>
+
+int var_glb; /* A global variable*/
+
+int main(void) {
+  pid_t childPID;
+  int var_lcl = 0;
+
+  childPID = fork();
+
+  if(childPID >= 0) { // fork was successful
+    if(childPID == 0) { // child process
+      var_lcl++;
+      var_glb++;
+      printf("\n Child :: var_lcl = [%d], var_glb[%d]\n", var_lcl, var_glb);
+    }
+    else { //Parent process
+      var_lcl = 10;
+      var_glb = 20;
+      printf("\n Parent :: var_lcl = [%d], var_glb[%d]\n", var_lcl, var_glb);
+    }
+  }
+  else { // fork failed
+    printf("\n Fork failed, quitting!!!!!!\n");
+    return 1;
+  }
+  return 0;
+}
+\end{lstlisting}
+Les variables var\textunderscore{}lcl et var\textunderscore{}glb sont utilisé pour montrer que le père et le fils travail bien sur des variables séparé.\newline
+Output:\newline
+Parent :: var_lcl = [10], var_glb[20]\newline
+Child :: var_lcl = [1], var_glb[1]\newline
+\href{https://www.thegeekstuff.com/2012/05/c-fork-function/}{Liens~de~l'exemple}\newline
+\href{http://www.commentcamarche.net/faq/10611-que-fait-un-fork}{Fork~pas~a~pas}\newline
+\href{http://pubs.opengroup.org/onlinepubs/9699919799/functions/fork.html#}{Reference~anglais~pour~fork}\newline
+\subsubsection{getpid()}
+Comment savoir le pid du processus courant?
+\begin{lstlisting}
+  #include <sys/types.h>
+  #include <unistd.h>
+  pid_t getpid(void);
+\end{lstlisting}
+Et pour le pid du père:
+\begin{lstlisting}
+  #include <sys/types.h>
+  #include <unistd.h>
+  pid_t getppid(void);
+\end{lstlisting}
+\subsection{Execution d'un programme depuis un programme C, "systeme calls"}
+Utilise la famille exec\newline
+Lorsqu’un processus fait appel à exec, le processus appelant est remplacé par le programme passé en paramètre. Si cela fonctionne, l’appel à exec ne retourne pas.\newline
+les différentes variantes:
+\begin{lstlisting}
+// permet de passer les paramètres du programme
+// en utilisant une liste d'arguments terminée par NULL
+int execl(const char *program, const char *arg, ...);
+execl("/bin/ls", "/bin/ls", "-l", "-a", NULL );
+
+// cherche le programme dans la variable PATH
+int execlp(const char *program, const char *arg, ...);
+execlp("ls", "ls", "-l", "-a", NULL );
+
+// avec un vecteur pour les paramètres et dois donner le chemin absolu
+int execv(const char *program, const char *argv [ ]);
+char *arguments [4];
+arguments[0] = "/bin/ls";
+arguments[1] = "-l";
+arguments[2] = "-a";
+arguments[3] = NULL;
+execv("/bin/ls", arguments);
+
+
+// avec un vecteur pour les paramètres et dois donner le chemin absolu
+int execvp(const char *program, const char *argv [ ]);
+char *arguments [4];
+arguments[0] = "ls";
+arguments[1] = "-l";
+arguments[2] = "-a";
+arguments[3] = NULL;
+execvp("ls", arguments);
+\end{lstlisting}
+\href{http://pubs.opengroup.org/onlinepubs/9699919799/functions/exec.html}{Référence en anglais pour approfondir}
+\subsubsection{Attendre la fin d'un processus}
+Attendre la fin d'un processus peut être intéressant quand on attend de ce processus un résultat.\newline
+Utilise la famille exec\newline
+\begin{lstlisting}
+#include<sys/types.h>
+#include<sys/wait.h>
+
+pid_t wait(int *status);
+pid_t waitpid(pid_t pid, int *status, int options);
+\end{lstlisting}
+wait: attent la fin d'un des processus fils, retourne son PID et stocke dans l'entier pointé par status (si status est différent de NULL), le code de retour du processus fils (ce qui est renvoyé par la  fonction main du processus fils).\par{}
+waitpid: comme wait mais attend uniquement le processus fils précisé par le paramètre PID.  Le paramètre entier \guillemotleft{}option\guillemotright{} permet de rentre l’appel à waitpid non bloquant avec la constante WNOHANG, si cela n’est pas nécessaire, on utilise la valeur 0.
+\par{}
+Pour savoir si le processus c'est terminé correctement, on utile la macro WIFEXITED(status) qui renvoie vrai si le processus fils s’est terminé normalement.\newline
+
+Ensuite pour avoir le résultat que le processus a renvoyé (ce que son main a renvoyé), on utilise la macro WEXITSTATUS(status).\newpage
+Et voilà, encore bien sur un exemple:
+\begin{lstlisting}
+/* CELEBW02
+
+  The following function suspends the calling process using &waitpid.
+  until a child process ends.
+
+*/
+#define _POSIX_SOURCE
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <time.h>
+
+main() {
+  pid_t pid;
+  time_t t;
+  int status;
+
+  if ((pid = fork()) < 0)
+    perror("fork() error");
+  else if (pid == 0) {
+    sleep(5);
+    exit(1);
+  }
+  else do {
+    if ((pid = waitpid(pid, &status, WNOHANG)) == -1)
+      perror("wait() error");
+    else if (pid == 0) {
+      time(&t);
+      printf("child is still running at %s", ctime(&t));
+      sleep(1);
+    }
+    else {
+      if (WIFEXITED(status))
+        printf("child exited with status of %d\n", WEXITSTATUS(status));
+      else puts("child did not exit successfully");
+    }
+  }
+  while (pid == 0);
+}
+\end{lstlisting}
+Output:\newline
+child is still running at Mon Jan 8 11:05:43 2018\newline
+child is still running at Mon Jan 8 11:05:44 2018\newline
+child is still running at Mon Jan 8 11:05:45 2018\newline
+child is still running at Mon Jan 8 11:05:46 2018\newline
+child is still running at Mon Jan 8 11:05:47 2018\newline
+child is still running at Mon Jan 8 11:05:48 2018\newline
+child is still running at Mon Jan 8 11:05:49 2018\newline
+child exited with status of 1\newline
+\href{https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.1.0/com.ibm.zos.v2r1.bpxbd00/rtwaip.htm}{Liens de l'exemple avec des explications plus poussées (anglais)}
+\subsection{Les pipes}
+Les pipes permettent a deux processus sur la même machine de communiquer de manière unidirictionnels entre eux. (pour pouvoir communiquer entre des machines différentes, on va utiliser des serveurs, mais on verra ça plus tard).\newline
+Il en existe deux type:
+\begin{enumerate}
+  \item anonymes: communication parentale, en famille quoi (père -> fils; fils -> fils)
+  \item nommés: utilisés pour la communication entre deux processus indépendants (pas de lien de parenté direct entre les deux), du coup il faudras le nommé d'où le nom.
+\end{enumerate}
+\subsubsection{Comment les créer?}
+\textbf{Les pipes anonymes:}
+\begin{lstlisting}
+  #include <unistd.h>
+
+  int pipe(int fd[2]);
+\end{lstlisting}
+C'est quoi tout ça?\newline
+\begin{description}
+  \item L’appel à pipe crée une paire de \guillemotleft{}file descriptors\guillemotright{} stockée dans fd.\newline
+           fd[0] sert à la lecture du pipe et fd[1] sert à l’écriture dans le pipe.
+  \item La fonction pipe renvoie 0 si elle réussie, autre chose sinon
+  \item Pour établir une communication (unidirectionelle!) à l’aide d’un pipe, il faut que le processus père crée un pipe avant de faire un (ou plusieurs) appel(s) à fork (sinon l'autre processus ne pourras pas connaître l'entré ou la sortie du pipe). Dès lors, après le fork, le processus père et le(s) processus fils peuvent accéder aux pipe en utilisant fd.
+  \item Pour une communication bidirectionelle, il faut bien sur créer deux pipes.
+\end{description}
+Pour écrire dans un tube (ce n'est pas dans les tp, mais ça me semble plutôt utile):
+\begin{lstlisting}
+ssize_t write(int entreeTube, const void *elementAEcrire, size_t nombreOctetsAEcrire);
+\end{lstlisting}
+La fonction prend en paramètre l'entrée du tube (on lui enverra fd[1]), un pointeur générique vers la mémoire contenant l'élément à écrire, ainsi que le nombre d'octets de cet élément.\newline
+Elle renvoie une valeur de type ssize\textunderscore{}t correspondant au nombre d'octets effectivement écrits.\par
+Et pour lire dedans:
+\begin{lstlisting}
+ssize_t read(int sortieTube, void *elementALire, size_t nombreOctetsALire);
+\end{lstlisting}
+La fonction prend en paramètre la sortie du tube (fd[0]), un pointeur vers la mémoire contenant l'élément à lire et le nombre d'octets de cet élément.\newline
+Elle renvoie une valeur de type ssize\textunderscore{}t qui correspond au nombre d'octets effectivement lus. On pourra ainsi comparer le troisième paramètre (nombreOctetsALire) à la valeur renvoyée pour vérifier qu'il n'y a pas eu d'erreurs.\newpage
+Petit example offert par openclassrooms:
+\begin{lstlisting}
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/wait.h>
+
+#define TAILLE_MESSAGE 256 /* Correspond à la taille de la chaîne à écrire */
+
+int main(void) {
+    pid_t pid_fils;
+    int fd[2];
+
+    char messageEcrire[TAILLE_MESSAGE];
+
+    if (pipe(fd) != 0) {
+      perror "erreur a la créeation du pipe"
+    }
+
+    pid_fils = fork();
+
+    if(pid_fils != 0) { /* Processus père */
+        sprintf(messageEcrire, "Bonjour, fils. Je suis ton père !");
+        /* La fonction sprintf permet de remplir
+        *  une chaîne de caractère avec un texte donné */
+
+        write(fd[1], messageEcrire, TAILLE_MESSAGE);
+    }
+    else if(pid_fils == 0) /* Processus fils */
+    {
+        read(fd[0], messageLire, TAILLE_MESSAGE);
+        printf("Message reçu = \"%s\"", messageLire);
+    }
+
+    return EXIT_SUCCESS;
+}
+\end{lstlisting}
+\textbf{Les pipes nommés:}
+\begin{lstlisting}
+  #include <sys/types.h>
+  #include <sys/stat.h>
+  
+  int mkfifo(const char *pathname, mode_t mode);
+\end{lstlisting}
+Le pipe nommé passe par un fichier spécial qui est créer lors de l'appel de cette fonction
+\begin{description}
+  \item avec comme path le pathname donné en paramètre
+  \item et comme permissions, ce qui est indiqué dans le paramètre mode, il y a plusieurs moyen d'utiliser ce paramètre:
+  \begin{enumerate}
+    \item S\textunderscore{}IRWXU: read, write, execute/search by owner 
+    \item S\textunderscore{}IRUSR: read permission, owner 
+    \item S\textunderscore{}IWUSR: write permission, owner 
+    \item S\textunderscore{}IXUSR: execute/search permission, owner 
+    \item S\textunderscore{}IRWXG: read, write, execute/search by group 
+    \item S\textunderscore{}IRGRP: read permission, group 
+    \item S\textunderscore{}IWGRP: write permission, group 
+    \item S\textunderscore{}IXGRP: execute/search permission, group 
+    \item S\textunderscore{}IRWXO: read, write, execute/search by others 
+    \item S\textunderscore{}IROTH: read permission, others 
+    \item S\textunderscore{}IWOTH: write permission, others 
+    \item S\textunderscore{}IXOTH: execute/search permission, others 
+    \item S\textunderscore{}ISUID: set-user-ID on execution 
+    \item S\textunderscore{}ISGID: set-group-ID on execution 
+    \item S\textunderscore{}ISVTX: on directories, restricted deletion flag
+    \item Ils peuvent être combiné avec: \guillemotleft{}|\guillemotright{}
+    \item Ou encore utiliser les valeursdes droits avec des chiffres(sous mode octal)
+    \begin{enumerate}
+      \item Le premier chiffre correspond au propriétaire
+      \item Le second au groupe du propriétaire
+      \item Le troisième a tous les autres \newline
+      \item Chaque chiffre peut avoir une valeur différentes:
+      \begin{enumerate}
+        \item 1 exécution
+        \item 2 écriture
+        \item 4 lecture\newline
+      \end{enumerate}
+      Et on fait une somme quand on veut combiner plusieurs permissions\par
+      Exemple:\newline
+      Pour attribuer toutes les permissions à vous, seule la lecture pour le groupe, et aucune pour les autres, la valeur correspondante est 0720\newline
+      Premier chiffre = 0 (obligatoire)\newline
+      Deuxième chiffre = 1 (Exécution) + 2 (Ecriture) + 4 (Lecture)\newline
+      Troisième chiffre = 0 (aucune permission)\newline
+    \end{enumerate}
+  \end{enumerate}
+  \item Et renvoie 0 si elle réussit, ou -1 en cas d'erreur.
+\end{description}
+\newpage
+Un dernier "petit" exemple:  (Ecrivain.c)
+\begin{lstlisting}
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+#define TAILLE_MESSAGE	256
+
+int main(void) {
+	int entreeTube;
+	char nomTube[] = "essai.fifo";
+	char chaineAEcrire[TAILLE_MESSAGE] = "Bonjour";
+
+	if(mkfifo(nomTube, 0644) != 0) 	{ // créer le tube
+		fprintf(stderr, "Impossible de créer le tube nommé.\n");
+		exit(EXIT_FAILURE);
+	}
+
+	if((entreeTube = open(nomTube, O_WRONLY)) == -1) 	{
+		fprintf(stderr, "Impossible d'ouvrir l'entrée du tube nommé.\n");
+		exit(EXIT_FAILURE);
+	}
+
+	write(entreeTube, chaineAEcrire, TAILLE_MESSAGE); // écris dans le tube
+
+	return EXIT_SUCCESS;
+}
+\end{lstlisting}
+Lecteur.c
+\begin{lstlisting}
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+#define TAILLE_MESSAGE	256
+
+int main(void) {
+	int sortieTube;
+	char nomTube[] = "essai.fifo";
+	char chaineALire[TAILLE_MESSAGE];
+
+	if((sortieTube = open ("essai.fifo", O_RDONLY)) == -1) 	{
+		fprintf(stderr, "Impossible d'ouvrir la sortie du tube nommé.\n");
+		exit(EXIT_FAILURE);
+	}
+
+	read(sortieTube, chaineALire, TAILLE_MESSAGE); // lit dans le tube
+        printf("%s", chaineALire);
+
+	return EXIT_SUCCESS;
+}
+
+\end{lstlisting}
+\href{https://openclassrooms.com/courses/la-programmation-systeme-en-c-sous-unix/les-tubes}{Les pipes (deux exemples), openclassrooms}\newline
+\href{http://www.zeitoun.net/articles/communication-par-tuyau/start}{Très très bon site pour les pipes}
+
 \section{TODO:}
 \begin{enumerate}
-  \item fork
-  \item exec
-  \item wait
-  \item launch
-  \item pipe
+  \item Expliquer comment compiler
   \item socket
   \item bind
   \item connect
   \item listen
   \item accept
   \item send
-  \item write ?
+  \item write?
   \item recv
   \item shutdown
   \item getpeername
@@ -788,7 +1144,7 @@ void* threadAlarme (void* arg) {
   \item gethostbyname
   \item select
 \end{enumerate}
-Comme vous pouvez le voir, il me reste beaucoup à faire en fait, il me reste deux grosses parties: fork et compagnie, et les serveurs.
+Comme vous pouvez le voir, il me reste beaucoup moins à faire en fait, il ne me reste plus que les serveurs et la compilation d'un programme. La compilation d'un programme ne risque pas de tomber a l'examen, mais les serveurs, c'est possible, donc c'est sur quoi je me pencherais mardi 9/01.
 
 \section{Sponsors}
 Ce document est complètement sponsorisé par OpenClassrooms, developpez.com et certainement plein d'autres que j'ai déjà oublié.\newline
