@@ -52,18 +52,22 @@ Les différents types et objets possibles + glossaire:
   \begin{lstlisting}
     "Hello world!"
   \end{lstlisting}
-  La représentation interne d'une chaîne de caractères est spécifiée. C'est un tableau de char terminé par un \guillemotleft{}\textbackslash0\guillemotright{}, le caractère de fin de chaine.
+  %https://openclassrooms.com/courses/apprenez-a-programmer-en-c/les-chaines-de-caracteres -> ici ils disent que c'est "\0" le caractère de fin de chaine.
+  La représentation interne d'une chaîne de caractères est spécifiée. C'est un tableau de char terminé par un \guillemotleft{}\textbackslash0\guillemotright{} ou \guillemotleft{}0\guillemotright{}, le caractère de fin de chaine.
+
   \begin{lstlisting}
     char s[] = "Hello";
   \end{lstlisting}
 
   est équivalent à:
   \begin{lstlisting}
-    char s[] = {'H','e','l','l','o',\0};
+    char s[] = {'H','e','l','l','o','\0'}; // ou alors on met un 0 à la place de '\0'
   \end{lstlisting}
+
   \item [\guillemotleft{}Suite d'objets\guillemotright{}]
   % vu qu'on est en c, on parle vraiment d'une suite d'objets ?
-  \item [Tableau] Un tableau est une suite d'objets identiques consécutifs.\newline Exemple:
+  \item [Tableau] Un tableau est une suite d'objets identiques consécutifs.\newline
+  Exemple:
   \begin{lstlisting}
   #include <stddef.h>
     size_t size_of_tab = sizeof (long); // type size_t
@@ -72,7 +76,7 @@ Les différents types et objets possibles + glossaire:
     // donne le nombre d'éléments dans le tableau tab
   \end{lstlisting}
 
-  Pour un tableau a 2 dimensions:
+  Pour un tableau à 2 dimensions:
   \begin{lstlisting}
   p = (int *)t;  // pas sur a 100 %
   <type> t[N][M];
@@ -80,7 +84,7 @@ Les différents types et objets possibles + glossaire:
   // permet de parcourir le tableau
   \end{lstlisting}
 
-  \item [Types:]  valeur minimal / valeur maximal  les termes entre \guillemotleft{} () \guillemotright{} sont facultatifs.
+  \item [Types:]  valeur minimal / valeur maximal les termes entre \guillemotleft{} () \guillemotright{} sont facultatifs.
   \item [char] 	0 	127
   \item [unsigned char] 	0 	255
   \item [signed char] 	-127 	127
@@ -111,25 +115,16 @@ Formateur de base 	Rôle 	Type attendu 	Types compatibles
 
 int main (void)
 {
-   printf ("%c\n", 'A');
-   printf ("%d\n", 123);
-   printf ("%d, '%c'\n", 'A', 'A');
+   printf ("%c\n", 'A'); // Affiche "A" puis retour à la ligne
+   printf ("%d\n", 123); // Affiche "123" puis retour à la ligne
+   printf ("%d, '%c'\n", 'A', 'A'); // Affiche "65", "A" puis retour à la ligne
 
-   printf ("Hello world\n");
-   printf ("Hello %s\n", "world");
-   printf ("%s\n", Hello world);
+   printf ("Hello world\n"); // Affiche "Hello world" puis retour à la ligne
+   printf ("Hello %s\n", "world"); // idem
+   printf ("%s\n", "Hello world"); // idem
 
    return 0;
 }
-\end{lstlisting}
-Renvoie:
-\begin{lstlisting}
-A
-123
-65, 'A'
-Hello world
-Hello world
-Hello world
 \end{lstlisting}
 \subsection{Fonction}
 Une fonction est une séquence d'instructions dans un bloc nommé. Une fonction est constituée de la séquence suivante:
@@ -140,7 +135,7 @@ Une fonction est une séquence d'instructions dans un bloc nommé. Une fonction 
   \item liste de paramètres ou une liste vide (dans ce cas, on écrit void)
   \item parenthèse fermante \guillemotleft{}) \guillemotright{}
   \item accolade ouvrante \guillemotleft{}\{\guillemotright{}
-  \item liste d'instructions terminée par un point virgule \guillemotleft{};\guillemotright{}, ou rien
+  \item liste des instructions terminées par un point virgule \guillemotleft{};\guillemotright{}, ou rien
   \item accolade fermante \guillemotleft{}\}\guillemotright{}.
 \end{description}
   L'utilisateur peut créer ses propres fonctions. Une fonction peut appeler une autre fonction. Généralement, une fonction réalisera une opération bien précise. L'organisation hiérarchique des fonctions permet un raffinement en partant du niveau le plus élevé (main()) en allant au niveau le plus élémentaire (atomique).\newline
@@ -248,15 +243,16 @@ void permuter(int * addr_a , int * addr_b)
   /* p étant désormais vu comme un int *, on peut alors lui appliquer l'opérateur *.
   */
 \end{lstlisting}
-Étant donné que la taille de toute donnée est multiple de celle d'un char, le type char * peut également être utilisé en tant que pointeur universel. En effet, une variable de type char * est un pointeur sur octet autrement dit il peut pointer n'importe quoi. Cela s'avère pratique des fois (lorsqu'on veut lire le contenu d'une mémoire octet par octet par exemple) mais dans la plupart des cas, il vaut mieux toujours utiliser les pointeurs génériques. Par exemple, la conversion d'une adresse de type différent en char * et vice versa nécessite toujours un cast, ce qui n'est pas le cas avec les pointeurs génériques.\newline
+Étant donné que la taille de toute donnée est multiple de celle d'un char, le type char * peut également être utilisé en tant que pointeur universel. En effet, une variable de type char * est un pointeur sur octet autrement dit il peut pointer n'importe quoi. Cela s'avère pratique de temps en temps (lorsqu'on veut lire le contenu d'une mémoire octet par octet par exemple) mais dans la plupart des cas, il vaut mieux toujours utiliser les pointeurs génériques. Par exemple, la conversion d'une adresse de type différent en char * et vice versa nécessite toujours un cast, ce qui n'est pas le cas avec les pointeurs génériques.\newline
 Dans printf, le spécificateur de format \%p permet d'imprimer une adresse (void *) dans le format utilisé par le système.\newline
 Et pour terminer, il existe une macro à savoir NULL, définie dans stddef.h, permettant d'indiquer qu'un pointeur ne pointe nulle part. Son intérêt est donc de permettre de tester la validité d'un pointeur.Il est conseillé de toujours initialiser un pointeur à NULL.
 
 \subsection{lvalue et rvalue}
-Dois-je vraiment rappeller comment ça fonctionne?
+Dois-je vraiment rappeler comment ça fonctionne?
 En gros, une lvalue est quelque chose qui peut ce situer à gauche du \guillemotleft{=}\guillemotright{} et rvalue a droite. Une rvalue possède une valeur mais pas d'adresse.
-\subsection{Opérateur usuel et logique}
-\textbf{usuel}: %mis en gras
+\href{https://www.internalpointers.com/post/understanding-meaning-lvalues-and-rvalues-c}{Très bon article (en anglais) sur les lvalues et rvalues}
+\subsection{Opérateurs usuels et logiques}
+\textbf{usuels}: %mis en gras
 \begin{description}
   \item [<] 	Inférieur à
   \item [>] 	Supérieur à
@@ -265,7 +261,7 @@ En gros, une lvalue est quelque chose qui peut ce situer à gauche du \guillemot
   \item [>=] 	Supérieur ou égal à
   \item [!=] 	Différent de
 \end{description}
-\textbf{logique}:
+\textbf{logiques}:
 \begin{description}
   \item [\&\&] ET
   \item [||] OU
@@ -306,7 +302,7 @@ else
     les instructions
   }
 \end{lstlisting}
-\subsection{do}
+\subsection{do..while}
 \begin{lstlisting}
 do
   {
@@ -461,18 +457,19 @@ int main()
 \subsection{Le jeu de caractères du C}
 Voir \href{http://emmanuel-delahaye.developpez.com/tutoriels/c/bonnes-pratiques-codage-c/#LI-A}{Bonne pratique de codage en C}
 \subsection{Commentaire}
-Préférer les commentaires en dessous ou au dessus d'une ligne plutôt que en bout de ligne, car souvent ça rend la ligne trop longue. \newline
-Pour les commentaires de plusieurs lignes, utiliser plutôt /* */.\newline
-S'il faut isoler provisoirement une portion de code, le mieux est de ne pas utiliser les commentaires (il pourrait y avoir des commentaires imbriqués), mais plutôt les directives du préprocesseur: \#ifdef .. \#endif ou \#if .. \#endif
+Préférez les commentaires en dessous ou au dessus d'une ligne plutôt qu'en bout de ligne, souvent ils rendent la ligne trop longue. \newline
+Pour les commentaires de plusieurs lignes, utiliser /* */.\newline
+S'il faut isoler provisoirement une portion de code, le mieux est de ne pas utiliser les commentaires (il pourrait y avoir des commentaires imbriqués), mais plutôt les directives de préprocesseur: \#ifdef .. \#endif ou \#if .. \#endif
+
 \begin{lstlisting}
 #if 0
   /* Compteur */
   int cpt ;
 #endif
 \end{lstlisting}
-Commenter le moins possible. Le principe est de ne commenter que ce qui apporte un supplément d'information. Il est d'usage d'utiliser en priorité l'auto-documentation, c'est à dire un choix judicieux des identificateurs qui fait que le code se lit 'comme un livre'…
+Commentez le moins possible. Le principe est de ne commenter que ce qui apporte un supplément d'information. Il est d'usage d'utiliser en priorité l'auto-documentation, c'est à dire un choix judicieux des identificateurs qui fait que le code se lit 'comme un livre'…
 \section{Les threads, ce qui est important quoi}
-On sait tous ce qu'est un tread, si tu sais pas, tu es dans la merde pour ton oral et va d'abord voir ton cours!
+On sait tous ce qu'est un thread, si tu ne sais pas, tu es dans la merde pour ton oral et va d'abord (re)voir ton cours!
 \subsection{Compilation}
 Toutes les fonctions relatives aux threads sont incluses dans le fichier d'en-tête <pthread.h> et dans la bibliothèque libpthread.a (soit -lpthread à la compilation).\newline
 Exemple:\newline
@@ -491,13 +488,13 @@ Pour créer un thread, il faut déjà déclarer une variable le représentant.Ce
 \end{lstlisting}
 Ce prototype est un peu compliqué, c'est pourquoi nous allons récapituler ensemble.
 \begin{description}
-  \item La fonction renvoie une valeur de type int: 0 si la création a été réussie ou une autre valeur si il y a eu une erreur.
+  \item La fonction renvoie une valeur de type int: 0 si la création a été réussie ou une autre valeur s'il y a eu une erreur.
   \item Le premier argument est un pointeur vers l'identifiant du thread (valeur de type pthread\textunderscore{}t).
-  \item Le second argument désigne les attributs du thread. Vous pouvez choisir de mettre le thread en état joignable (par défaut) ou détaché, et choisir sa politique d'ordonnancement (usuelle, temps-réel\ldots). Dans nos exemple, on mettra généralement NULL.
+  \item Le second argument désigne les attributs du thread. Vous pouvez choisir de mettre le thread en état joignable (par défaut) ou détaché, et choisir sa politique d'ordonnancement (usuelle, temps-réel\ldots). Dans nos exemples, on mettra généralement NULL.
   \item Le troisième argument est un pointeur vers la fonction à exécuter dans le thread. Cette dernière devra être de la forme \guillemotleft{}void *fonction(void* arg)\guillemotright{} et contiendra le code à exécuter par le thread.
   \item Enfin, le quatrième et dernier argument est l'argument à passer au thread.
 \end{description}
-\subsubsection{Suprimer un thread}
+\subsubsection{Supprimer un thread}
 \begin{lstlisting}
 #include <pthread.h>
 
@@ -549,7 +546,7 @@ On a bien sur un soucis, c'est que ici, le programme s'arrête avant que le thre
 int pthread_join(pthread_t th, void **thread_return);
 \end{lstlisting}
 Elle prend donc en paramètre l'identifiant du thread et son second paramètre, un pointeur, permet de récupérer la valeur retournée par la fonction dans laquelle s'exécute le thread (c'est-à-dire l'argument de pthread\textunderscore{}exit).\newline
-Du coup dans l'exemple précédent, on peut rajouter ceci(après la création du thread, bien sur):
+Du coup dans l'exemple précédent, on peut rajouter ceci(après la création du thread, bien sûr):
 \begin{lstlisting}
   if (pthread_join(thread1, NULL)) {
     perror("pthread_join");
@@ -564,9 +561,9 @@ Donc, pour ceux qui n'ont pas suivi:
   \item appeler la fonction pthread\textunderscore{}join pour "fusionner" les deux threads (en réalité, attendre le thread en retard sur l'autre)
 \end{enumerate}
 \subsection{Mutex et toute ces belles petites choses}
-Bon, c'est sympa tout ça, mais il y a encore un soucis. Toutes les variables sont partagées, et on se rend vite compte que ça peut poser problème, si on veut faire plusieurs calculs sur une même variable, mais l'un à la suite de l'autre, ça risque de coincer, on ne sait pas dans quel ordre vont se faire les calculs. Ce qui veut dire que nous risquons de modifier une valeur dans un thread alors qu'un autre thread en avait besoin sans modifications.(je ne sais pas si j'en ai pas perdu par hasard, si c'est le cas, sachez juste que les mutex sont vachement utiles pour garder visible une variable qu'à un seul thread et la cacher à tous les autres).\newline
+Bon, c'est sympa tout ça, mais il y a encore un soucis. Toutes les variables sont partagées, et on se rend vite compte que ça peut poser problème, si on veut faire plusieurs calculs sur une même variable, mais l'un à la suite de l'autre, ça risque de coincer, on ne sait pas dans quel ordre vont se faire les calculs. Ce qui veut dire que nous risquons de modifier une valeur dans un thread alors qu'un autre thread en avait besoin sans modifications.(je ne sais pas si j'en ai pas perdu par hasard, si c'est le cas, sachez juste que les mutexes sont vachement utiles pour garder visible une variable qu'à un seul thread et la cacher à tous les autres).\newline
 Il faut aussi de nouveau créer une variable, mais cette fois avec un type \guillemotleft{}pthread\textunderscore{}mutex\textunderscore{}t\guillemotright{}.\newline
-Le problème, c'est qu'il faut que le mutex soit accessible en même temps que la variable et dans tout le fichier (vu que différents threads s'exécutent dans différentes fonctions). La solution la plus simple consiste à déclarer les mutex en variable globale. Mais pour le faire plus proprement, on peut utiliser une structure avec la donnée à protéger. Allez, encore un exemple:
+Le problème, c'est qu'il faut que le mutex soit accessible en même temps que la variable et dans tout le fichier (vu que différents threads s'exécutent dans différentes fonctions). La solution la plus simple consiste à déclarer les mutexes en variable globale. Pour le faire plus proprement possible, on peut utiliser une structure avec la donnée à protéger. Allez, encore un exemple:
 \begin{lstlisting}
 typedef struct data {
     int var;
@@ -574,7 +571,7 @@ typedef struct data {
 } data;
 \end{lstlisting}
 Ainsi, nous pourrons passer la structure en paramètre à nos threads quand nous les créons.\newline
-Du coup, voilà comment on initialise un mutex en prenant en compte la convention qui veut qu'on l'initialise mutex avec la valeur de la constante PTHREAD\textunderscore{}MUTEX\textunderscore{}INITIALIZER, déclarée dans pthread.h.
+Du coup, voilà comment on initialise un mutex en prenant en compte la convention qui veut qu'on initialise le mutex avec la valeur de la constante PTHREAD\textunderscore{}MUTEX\textunderscore{}INITIALIZER, déclarée dans pthread.h.
 \begin{lstlisting}
 #include <stdlib.h>
 #include <pthread.h>
@@ -610,7 +607,7 @@ int pthread_mutex_destroy(pthread_mutex_t *mut);
 \end{lstlisting}
 \subsection{Les conditions (permettent d'attendre un autre thread)}
 Quand un thread est en attente d'une condition, il reste bloqué tant que celle-ci n'est pas réalisée par un autre thread.
-\subsubsection{Initiation}
+\subsubsection{Initiation} %tu voulais pas dire initialisation ?
 \begin{lstlisting}
   static pthread_cond_t cond_stock = PTHREAD_COND_INITIALIZER;
 \end{lstlisting}
@@ -675,7 +672,7 @@ Cette fonction permet de mettre le thread appelant en attente de la condition, i
 Ses deux arguments sont:
 \begin{description}
   \item [L'adresse de la variable] condition de type pthread\textunderscore{}cond\textunderscore{}t.
-  \item [L'adresse d'un mutex] Une condition est en effet, toujours associée à un mutex
+  \item [L'adresse d'un mutex] Une condition est en effet, toujours associée à un mutex!
 \end{description}
 \subsubsection{Réveiller un thread}
 pthread\textunderscore{}cond\textunderscore{}signal est la fonction qui permet de signaler la condition au thread qui l'attend.
@@ -683,14 +680,14 @@ Elle prend en paramètre l'adresse de la variable-condition surveillée. Cette f
 \begin{lstlisting}
 int pthread_cond_signal (pthread_cond_t *cond);
 \end{lstlisting}
-\subsubsection{Réveiller plusieurs thread}
-Cette fonction permet de réveiller tous les thread qui surveille la condition cond. Tout comme\newline pthread\textunderscore{}cond\textunderscore{}signal, elle prend en paramètre l'adresse de la variable-condition surveillée. 
+\subsubsection{Réveiller plusieurs threads}
+Cette fonction permet de réveiller tous les threads qui surveillent la condition cond. Tout comme\newline pthread\textunderscore{}cond\textunderscore{}signal, elle prend en paramètre l'adresse de la variable-condition surveillée.
 \begin{lstlisting}
 int pthread_cond_broadcast (pthread_cond_t *cond);
 \end{lstlisting}
 \href{http://franckh.developpez.com/tutoriels/posix/pthreads/}{cours complet sur les threads}
 \newpage
-\subsection{Exemple avec les conditions et les mutex}
+\subsection{Exemple avec les conditions et les mutexes}
 \begin{lstlisting}
 #include <stdio.h>
 #include <stdlib.h>
