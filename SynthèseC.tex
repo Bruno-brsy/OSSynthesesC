@@ -10,7 +10,7 @@
 
 \usepackage[top=2cm, bottom=2.5cm, left=2.5cm, right=2cm]{geometry}
 \title{OS: Synthèse C}
-\author{Bruno Sylin}
+\author{Bruno}
 \date\today
 \begin{document}
 
@@ -555,7 +555,6 @@ int main(void) {
 	    perror("pthread_create");
       return EXIT_FAILURE;
     }
-
     printf("Après la création du thread.\n");
 
     return EXIT_SUCCESS;
@@ -1020,7 +1019,6 @@ int main(void) {
     if (pipe(fd) != 0) {
       perror "erreur a la créeation du pipe"
     }
-
     pid_fils = fork();
 
     if(pid_fils != 0) { /* Processus père */
@@ -1035,7 +1033,6 @@ int main(void) {
         read(fd[0], messageLire, TAILLE_MESSAGE);
         printf("Message reçu = \"%s\"", messageLire);
     }
-
     return EXIT_SUCCESS;
 }
 \end{lstlisting}
@@ -1367,7 +1364,6 @@ struct hostent {
   };
   #define h_addr h_addr_list[0]
 \end{lstlisting}
-\newpage
 \subsubsection{Exemple sans select, correctif de tp}
 \begin{lstlisting}
 // Serveur.c
@@ -1403,7 +1399,6 @@ int main(void) {
         perror("socket");
         exit(1);
     }
-
     if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1) {
         perror("setsockopt");
         exit(1);
@@ -1418,12 +1413,10 @@ int main(void) {
         perror("bind");
         exit(1);
     }
-
     if (listen(sockfd, BACKLOG) == -1) {
         perror("listen");
         exit(1);
     }
-
     sa.sa_handler = sigchld_handler; // reap all dead processes
     sigemptyset(&sa.sa_mask);
     sa.sa_flags = SA_RESTART;
@@ -1431,7 +1424,6 @@ int main(void) {
         perror("sigaction");
         exit(1);
     }
-
     while(1) {  // main accept() loop
         sin_size = sizeof(struct sockaddr_in);
         if ((new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &sin_size)) == -1) {
@@ -1448,12 +1440,12 @@ int main(void) {
         }
         close(new_fd);  // parent doesn't need this
     }
-
     return 0;
 }
 \end{lstlisting}
-client.c
 \begin{lstlisting}
+// client.c
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -1479,17 +1471,14 @@ int main(int argc, char *argv[])
         fprintf(stderr,"usage: client hostname\n");
         exit(1);
     }
-
     if ((he=gethostbyname(argv[1])) == NULL) {  // get the host info 
         perror("gethostbyname");
         exit(1);
     }
-
     if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         perror("socket");
         exit(1);
     }
-
     their_addr.sin_family = AF_INET;    // host byte order 
     their_addr.sin_port = htons(PORT);  // short, network byte order 
     their_addr.sin_addr = *((struct in_addr *)he->h_addr);
@@ -1499,12 +1488,10 @@ int main(int argc, char *argv[])
         perror("connect");
         exit(1);
     }
-
     if ((numbytes=recv(sockfd, buf, MAXDATASIZE-1, 0)) == -1) {
         perror("recv");
         exit(1);
     }
-
     buf[numbytes] = '\0';
 
     printf("Received: %s",buf);
@@ -1515,26 +1502,65 @@ int main(int argc, char *argv[])
 }
 \end{lstlisting}
 \subsection{select}
-\section{TODO:}
-\begin{enumerate}
-  \item Expliquer comment compiler
-  \item socket done
-  \item bind done
-  \item connect done
-  \item listen done
-  \item accept done
-  \item send done
-  \item write ?
-  \item recv done
-  \item shutdown done
-  \item getpeername done
-  \item gethostname done
-  \item gethostbyname done
-  \item select
-\end{enumerate}
-Comme vous pouvez le voir, il me reste beaucoup moins à faire en fait, il ne me reste plus que les serveurs et la compilation d'un programme. La compilation d'un programme ne risque pas de tomber a l'examen, mais les serveurs, c'est possible, donc c'est sur quoi je me pencherais mardi 9/01.
+Un serveur doit parfois simultanément pouvoir recevoir des données sur un socket et accepter de nouvelles connexions. Cela peut poser problème, car les recv() et les accept() sont bloquants. On peut les rendre non-bloquants, mais on monopoliserait le processeur.\par
+Solution : la fonction select() permet d'écouter plusieurs socket descriptors simultanément et d'être réveillé par le premier qui devient actif.
+\begin{lstlisting}
+#include <sys/time.h>
+#include <sys/types.h>
+#include <unistd.h>
 
-\section{Sponsors}
+int select(int n, fd_set *readfds, fd_set *writefds,
+               fd_set *exceptfds, struct timeval *timout);
+\end{lstlisting}
+Le type fd\textunderscore{}set représente un ensemble de file descriptors. Ces ensembles peuvent être mis à jour avec les macros suivantes:
+\begin{description}
+  \item [FD\textunderscore{}SET(int fd, fd\textunderscore{}set *set)] ajouter fd à un ensemble
+  \item [FD\textunderscore{}CLR(int fd, fd\textunderscore{}set *set)] enlever fd d'un ensemble.
+  \item [FD\textunderscore{}ZERO(fd\textunderscore{}set *set)] vider un ensemble.
+  \item [FD\textunderscore{}ISSET(int fd, fd\textunderscore{}set *set)] tester si fd appartient à l'ensemble.
+\end{description}
+select() écoute trois ensembles de file descriptors: readfds, writefds, et exceptfds et attend que (au moins) l’un d’entre eux devienne actif
+\begin{enumerate}
+  \item le premier paramètre (n) doit être initialisé au max des fd + 1.
+  \item le second paramètre (readfds) contiendra les fd prêts à être lus l’appel de la fonction.
+  \item le troisième paramètre (writefds) contiendra les fd prêts à être écrits l’appel de la fonction.
+  \item le quatrième paramètre (timeval) utilisé pour spécifier un timeout, est du type suivant:
+  \begin{lstlisting}
+    struct timeval {
+      int tv_sec;    // secondes
+      int tv_usec;   // microsecondes
+    };
+  \end{lstlisting}
+\end{enumerate}
+Exemple de select seul: (Tp)
+\begin{lstlisting}
+#include <stdio.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+int main() {
+  fd_set read_set; 
+  struct timeval timeout;
+
+  FD_SET(STDIN_FILENO, &read_set);
+  timeout.tv_sec = 3;  // attend 3 secondes
+  timeout.tv_usec = 0;  
+  select(STDIN_FILENO + 1, &read_set, NULL, NULL, &timeout); //
+
+  if (FD_ISSET(STDIN_FILENO, &read_set)) { // attend une entrée au clavier
+    char buffer[1024];
+    int end = read(STDIN_FILENO, buffer, 1024);
+
+    buffer[end-1] = '\0'; // buffer[end-1] contient '\n'
+    printf("Chaine de caractere lue : %s\n", buffer);
+  }
+  else {
+    printf("Timeout\n");
+  }
+}
+\end{lstlisting}
+\section{Sponsors/sources}
 Ce document est complètement sponsorisé par OpenClassrooms, developpez.com et certainement plein d'autres que j'ai déjà oublié.\newline
 \href{http://emmanuel-delahaye.developpez.com/tutoriels/c/bonnes-pratiques-codage-c/#LI-A}{Liens des bonnes pratiques pour C} (oui, il est déjà apparu en haut)\newline
 \href{http://melem.developpez.com/tutoriels/langage-c/initiation-langage-c/}{initiation au language C} Si vous êtes complètement perdu car vous ne savez pas ce que veut dire C++ et que vous n'en avez jamais fait, c'est assez long, je préviens (en même temps, vous venez de loin)\newline
