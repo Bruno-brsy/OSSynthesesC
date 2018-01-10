@@ -28,7 +28,7 @@ morekeywords={size_t}
 % \lstset{language=c}
 \maketitle
 \tableofcontents
-% je mets des TODO: quand j'ai encore quelque chose a faire, car dans mon éditeur de texte je les vois très facillement, si vous n'avez pas fini une section, je vous invite a faire de même, ou alors écrire autre chose, mais que ça puisse ce voir. Si vous voulez des choses en plus, je vous invite également a les mettre dans la section TODO, ce seras plus simple.
+% je mets des TODO quand j'ai encore quelque chose à faire, car dans mon éditeur de texte je les vois très facilement, si vous n'avez pas fini une section, je vous invite a faire de même, ou alors écrire autre chose, mais que ça puisse se voir. Si vous voulez des choses en plus, je vous invite également à les mettre dans la section TODO, ce sera plus simple.
 \section{Intro}
 Programme minimal:
 \begin{lstlisting}
@@ -478,7 +478,7 @@ Pierre.Age=42;
 \end{lstlisting}
 \section{Les caractères}
 \subsection{Le jeu de caractères du C}
-Voir \href{http://emmanuel-delahaye.developpez.com/tutoriels/c/bonnes-pratiques-codage-c/#LI-A}{Bonne pratique de codage en C}
+Voir \href{http://emmanuel-delahaye.developpez.com/tutoriels/c/bonnes-pratiques-codage-c/#LI-A}{les bonnes pratiques de codage en C}
 \subsection{Commentaire}
 Préférez les commentaires en dessous ou au dessus d'une ligne plutôt qu'en bout de ligne, souvent ils rendent la ligne trop longue. \newline
 Pour les commentaires de plusieurs lignes, utiliser /* */.\newline
@@ -579,7 +579,7 @@ Donc, pour ceux qui n'ont pas suivi:
 \begin{enumerate}
   \item créer une fonction qui va permettre de faire tous les calculs qu'on veut dans les autres threads que le thread principal;
   \item initialiser une variable de type pthread\textunderscore{}t pour chaque thread qu'on veut créer;
-  \item appeler cette fonction (dans un if, souvent, ça permet de gérer les éventuelles erreurs plus facillement);
+  \item appeler cette fonction (dans un if, souvent, ça permet de gérer les éventuelles erreurs plus facilement);
   \item appeler la fonction pthread\textunderscore{}join pour "fusionner" les deux threads (en réalité, attendre le thread en retard sur l'autre)
 \end{enumerate}
 \subsection{Mutex et toute ces belles petites choses}
@@ -703,7 +703,7 @@ Elle prend en paramètre l'adresse de la variable-condition surveillée. Cette f
 int pthread_cond_signal (pthread_cond_t *cond);
 \end{lstlisting}
 \subsubsection{Réveiller plusieurs threads}
-Cette fonction permet de réveiller tous les threads qui surveillent la condition cond. Tout comme\newline pthread\textunderscore{}cond\textunderscore{}signal, elle prend en paramètre l'adresse de la variable-condition surveillée. 
+Cette fonction permet de réveiller tous les threads qui surveillent la condition cond. Tout comme\newline pthread\textunderscore{}cond\textunderscore{}signal, elle prend en paramètre l'adresse de la variable-condition surveillée.
 \begin{lstlisting}
 int pthread_cond_broadcast (pthread_cond_t *cond);
 \end{lstlisting}
@@ -788,11 +788,11 @@ void* threadAlarme (void* arg) {
 \end{lstlisting}
 \href{https://openclassrooms.com/courses/la-programmation-systeme-en-c-sous-unix/les-threads-3#/id/r-1515355}{Lien de l'exemple}
 \section{Gestion des processus}
-Pour cette partie je me suis plus inspiré des slides des tp.
+Pour cette partie je me suis plus inspiré des slides des tps.
 \subsection{Création des processus}
 \subsubsection{fork}
 Fork permet de cloner intégralement le processus courant avec un pid différent pour son fils.
-Du coup, fork est la seule fonction qui renvoie deux valeur:
+Du coup, fork est la seule fonction qui renvoie deux valeurs:
 \begin{enumerate}
   \item dans le processus fils (le clone), fork renvoie 0
   \item dans le processus père (l'original), fork renvoie le pid du fils
@@ -844,13 +844,13 @@ int main(void) {
   return 0;
 }
 \end{lstlisting}
-Les variables var\textunderscore{}lcl et var\textunderscore{}glb sont utilisé pour montrer que le père et le fils travail bien sur des variables séparé.\newline
+Les variables var\textunderscore{}lcl et var\textunderscore{}glb sont utilisées pour montrer que le père et le fils travaillent bien sur des variables séparées.\newline
 Output:\newline
 Parent :: var\textunderscore{}lcl = [10], var\textunderscore{}glb[20]\newline
 Child :: var\textunderscore{}lcl = [1], var\textunderscore{}glb[1]\newline
-\href{https://www.thegeekstuff.com/2012/05/c-fork-function/}{Liens~de~l'exemple}\newline
-\href{http://www.commentcamarche.net/faq/10611-que-fait-un-fork}{Fork~pas~a~pas}\newline
-\href{http://pubs.opengroup.org/onlinepubs/9699919799/functions/fork.html#}{Reference~anglais~pour~fork}\newline
+\href{https://www.thegeekstuff.com/2012/05/c-fork-function/}{Liens de l'exemple}\newline
+\href{http://www.commentcamarche.net/faq/10611-que-fait-un-fork}{Fork pas à pas}\newline
+\href{http://pubs.opengroup.org/onlinepubs/9699919799/functions/fork.html#}{Référence anglais pour fork}\newline
 \subsubsection{getpid()}
 Comment savoir le pid du processus courant?
 \begin{lstlisting}
@@ -864,7 +864,7 @@ Et pour le pid du père:
   #include <unistd.h>
   pid_t getppid(void);
 \end{lstlisting}
-\subsection{Execution d'un programme depuis un programme C, "systeme calls"}
+\subsection{Exécution d'un programme depuis un programme C, "system calls"}
 Utilise la famille exec\newline
 Lorsqu'un processus fait appel à exec, le processus appelant est remplacé par le programme passé en paramètre. Si cela fonctionne, l'appel à exec ne retourne pas.\newline
 les différentes variantes:
@@ -908,13 +908,13 @@ Utilise la famille exec\newline
 pid_t wait(int *status);
 pid_t waitpid(pid_t pid, int *status, int options);
 \end{lstlisting}
-wait: attent la fin d'un des processus fils, retourne son PID et stocke dans l'entier pointé par status (si status est différent de NULL), le code de retour du processus fils (ce qui est renvoyé par la  fonction main du processus fils).\par{}
-waitpid: comme wait mais attend uniquement le processus fils précisé par le paramètre PID.  Le paramètre entier \guillemotleft{}option\guillemotright{} permet de rentre l'appel à waitpid non bloquant avec la constante WNOHANG, si cela n'est pas nécessaire, on utilise la valeur 0.
+wait: attend la fin d'un des processus fils, retourne son PID et stocke dans l'entier pointé par status (si status est différent de NULL) le code de retour du processus fils (ce qui est renvoyé par la fonction main du processus fils).\par{}
+waitpid: comme wait mais attend uniquement le processus fils précisé par le paramètre PID.  Le paramètre entier \guillemotleft{}option\guillemotright{} permet de rendre l'appel à waitpid non bloquant avec la constante WNOHANG, si cela n'est pas nécessaire, on utilise la valeur 0.
 \par{}
-Pour savoir si le processus c'est terminé correctement, on utile la macro WIFEXITED(status) qui renvoie vrai si le processus fils s'est terminé normalement.\newline
+Pour savoir si le processus s'est terminé correctement, on utile la macro WIFEXITED(status) qui renvoie vrai si le processus fils s'est terminé normalement.\newline
 
 Ensuite pour avoir le résultat que le processus a renvoyé (ce que son main a renvoyé), on utilise la macro WEXITSTATUS(status).\newpage
-Et voilà, encore bien sur un exemple:
+Et voilà, encore bien sûr un exemple:
 \begin{lstlisting}
 /* CELEBW02
 
@@ -968,11 +968,11 @@ child is still running at Mon Jan 8 11:05:49 2018\newline
 child exited with status of 1\newline
 \href{https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.1.0/com.ibm.zos.v2r1.bpxbd00/rtwaip.htm}{Liens de l'exemple avec des explications plus poussées (anglais)}
 \subsection{Les pipes}
-Les pipes permettent a deux processus sur la même machine de communiquer de manière unidirictionnels entre eux. (pour pouvoir communiquer entre des machines différentes, on va utiliser des serveurs, mais on verra ça plus tard).\newline
-Il en existe deux type:
+Les pipes permettent à deux processus sur la même machine de communiquer de manière unidirectionnelles entre eux. (pour pouvoir communiquer entre des machines différentes, on va utiliser des serveurs, mais on verra ça plus tard).\newline
+Il en existe deux types:
 \begin{enumerate}
   \item anonymes: communication parentale, en famille quoi (père -> fils; fils -> fils)
-  \item nommés: utilisés pour la communication entre deux processus indépendants (pas de lien de parenté direct entre les deux), du coup il faudras le nommé d'où le nom.
+  \item nommés: utilisés pour la communication entre deux processus indépendants (pas de lien de parenté direct entre les deux), du coup il faudra le nommer, d'où le nom.
 \end{enumerate}
 \subsubsection{Comment les créer?}
 \textbf{Les pipes anonymes:}
@@ -985,11 +985,11 @@ C'est quoi tout ça?\newline
 \begin{description}
   \item L'appel à pipe crée une paire de \guillemotleft{}file descriptors\guillemotright{} stockée dans fd.\newline
            fd[0] sert à la lecture du pipe et fd[1] sert à l'écriture dans le pipe.
-  \item La fonction pipe renvoie 0 si elle réussie, autre chose sinon
-  \item Pour établir une communication (unidirectionelle!) à l'aide d'un pipe, il faut que le processus père crée un pipe avant de faire un (ou plusieurs) appel(s) à fork (sinon l'autre processus ne pourras pas connaître l'entré ou la sortie du pipe). Dès lors, après le fork, le processus père et le(s) processus fils peuvent accéder aux pipe en utilisant fd.
-  \item Pour une communication bidirectionelle, il faut bien sur créer deux pipes.
+  \item La fonction pipe renvoie 0 si elle réussit, autre chose sinon.
+  \item Pour établir une communication (unidirectionelle!) à l'aide d'un pipe, il faut que le processus père crée un pipe avant de faire un (ou plusieurs) appel(s) à fork (sinon l'autre processus ne pourra pas connaître l'entrée ou la sortie du pipe). Dès lors, après le fork, le processus père et le(s) processus fils peuvent accéder au pipe en utilisant fd.
+  \item Pour une communication bidirectionelle, il faut bien sûr créer deux pipes.
 \end{description}
-Pour écrire dans un tube (ce n'est pas dans les tp, mais ça me semble plutôt utile):
+Pour écrire dans un tube (ce n'est pas dans les tps, mais ça me semble plutôt utile):
 \begin{lstlisting}
 ssize_t write(int entreeTube, const void *elementAEcrire, size_t nombreOctetsAEcrire);
 \end{lstlisting}
@@ -1001,7 +1001,7 @@ ssize_t read(int sortieTube, void *elementALire, size_t nombreOctetsALire);
 \end{lstlisting}
 La fonction prend en paramètre la sortie du tube (fd[0]), un pointeur vers la mémoire contenant l'élément à lire et le nombre d'octets de cet élément.\newline
 Elle renvoie une valeur de type ssize\textunderscore{}t qui correspond au nombre d'octets effectivement lus. On pourra ainsi comparer le troisième paramètre (nombreOctetsALire) à la valeur renvoyée pour vérifier qu'il n'y a pas eu d'erreurs.\newpage
-Petit example offert par openclassrooms:
+Petit exemple offert par OpenClassrooms:
 \begin{lstlisting}
 #include <stdio.h>
 #include <stdlib.h>
@@ -1040,36 +1040,36 @@ int main(void) {
 \begin{lstlisting}
   #include <sys/types.h>
   #include <sys/stat.h>
-  
+
   int mkfifo(const char *pathname, mode_t mode);
 \end{lstlisting}
-Le pipe nommé passe par un fichier spécial qui est créer lors de l'appel de cette fonction
+Le pipe nommé passe par un fichier spécial qui est créer lors de l'appel de cette fonction,
 \begin{description}
   \item avec comme path le pathname donné en paramètre
   \item et comme permissions, ce qui est indiqué dans le paramètre mode, il y a plusieurs moyen d'utiliser ce paramètre:
   \begin{enumerate}
-    \item S\textunderscore{}IRWXU: read, write, execute/search by owner 
-    \item S\textunderscore{}IRUSR: read permission, owner 
-    \item S\textunderscore{}IWUSR: write permission, owner 
-    \item S\textunderscore{}IXUSR: execute/search permission, owner 
-    \item S\textunderscore{}IRWXG: read, write, execute/search by group 
-    \item S\textunderscore{}IRGRP: read permission, group 
-    \item S\textunderscore{}IWGRP: write permission, group 
-    \item S\textunderscore{}IXGRP: execute/search permission, group 
-    \item S\textunderscore{}IRWXO: read, write, execute/search by others 
-    \item S\textunderscore{}IROTH: read permission, others 
-    \item S\textunderscore{}IWOTH: write permission, others 
-    \item S\textunderscore{}IXOTH: execute/search permission, others 
-    \item S\textunderscore{}ISUID: set-user-ID on execution 
-    \item S\textunderscore{}ISGID: set-group-ID on execution 
-    \item S\textunderscore{}ISVTX: on directories, restricted deletion flag
+    \item S\textunderscore{}IRWXU: read, write, execute/search by owner;
+    \item S\textunderscore{}IRUSR: read permission, owner;
+    \item S\textunderscore{}IWUSR: write permission, owner;
+    \item S\textunderscore{}IXUSR: execute/search permission, owner;
+    \item S\textunderscore{}IRWXG: read, write, execute/search by group;
+    \item S\textunderscore{}IRGRP: read permission, group;
+    \item S\textunderscore{}IWGRP: write permission, group;
+    \item S\textunderscore{}IXGRP: execute/search permission, group;
+    \item S\textunderscore{}IRWXO: read, write, execute/search by others;
+    \item S\textunderscore{}IROTH: read permission, others;
+    \item S\textunderscore{}IWOTH: write permission, others;
+    \item S\textunderscore{}IXOTH: execute/search permission, others;
+    \item S\textunderscore{}ISUID: set-user-ID on execution;
+    \item S\textunderscore{}ISGID: set-group-ID on execution;
+    \item S\textunderscore{}ISVTX: on directories, restricted deletion flag;
     \item Ils peuvent être combiné avec: \guillemotleft{}|\guillemotright{}
-    \item Ou encore utiliser les valeursdes droits avec des chiffres(sous mode octal)
+    \item Ou encore utiliser les valeurs des droits avec des chiffres(sous forme octal):
     \begin{enumerate}
       \item Le premier chiffre correspond au propriétaire
       \item Le second au groupe du propriétaire
-      \item Le troisième a tous les autres \newline
-      \item Chaque chiffre peut avoir une valeur différentes:
+      \item Le troisième à tous les autres \newline
+      \item Chaque chiffre peut avoir une valeur différente:
       \begin{enumerate}
         \item 1 exécution
         \item 2 écriture
@@ -1141,11 +1141,11 @@ int main(void) {
 }
 
 \end{lstlisting}
-\href{https://openclassrooms.com/courses/la-programmation-systeme-en-c-sous-unix/les-tubes}{Les pipes (deux exemples), openclassrooms}\newline
-\href{http://www.zeitoun.net/articles/communication-par-tuyau/start}{Très très bon site pour les pipes}
+\href{https://openclassrooms.com/courses/la-programmation-systeme-en-c-sous-unix/les-tubes}{Les pipes (deux exemples), OpenClassrooms}\newline
+\href{http://www.zeitoun.net/articles/communication-par-tuyau/start}{Excellent site pour les pipes}
 \newpage
 \section{Les serveurs}
-Les fonction vue et utile:
+Les fonctions vues et utiles:
 \begin{enumerate}
   \item socket
   \item bind
@@ -1163,7 +1163,7 @@ Les fonction vue et utile:
 \end{enumerate}
 \href{http://broux.developpez.com/articles/c/sockets/}{Cours sur developpez.com}
 Les sockets sont des flux de données, permettant à des machines locales ou distantes de communiquer entre elles via des protocoles. Les différents protocoles sont TCP qui est un protocole dit "connecté", et UDP qui est un protocole dit "non connecté".
-\subsection{Les structures utilisés généralement}
+\subsection{Les structures utilisées généralement}
 \subsubsection{sockaddr}
 \begin{lstlisting}
 struct sockaddr {
@@ -1172,7 +1172,7 @@ struct sockaddr {
 };
 \end{lstlisting}
 \subsubsection{sockaddr\textunderscore{}in}
-Plus facile a utiliser
+Plus facile à utiliser.
 \begin{lstlisting}
 struct sockaddr_in {
   short int sin_family; // Address family
@@ -1195,8 +1195,8 @@ struct in_addr {
   \item ntohl() "Network to Host Long"
 \end{description}
 Note: dans le struct sockaddr\textunderscore{}in:\newline
-les champs sin\textunderscore{}addr et sin\textunderscore{}port doivent aussi être convertis.\par
-La fonction inet\textunderscore{}aton qui n permet d'assigner une valeur au champ sin\textunderscore{}addr d'un struct sockaddr\textunderscore{}in à partir d'un string en notation pointée:
+les champs sin\textunderscore{}addr et sin\textunderscore{}port doivent aussi être converti.\par
+La fonction inet\textunderscore{}aton qui permet d'assigner une valeur au champ sin\textunderscore{}addr d'un struct sockaddr\textunderscore{}in à partir d'un string en notation pointée:
 \begin{lstlisting}
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -1219,7 +1219,7 @@ Variante: fonction inet\textunderscore{}addr(const char* cp), utilisée de la fa
 \end{lstlisting}
 Et inet\textunderscore{}ntoa(struct in\textunderscore{}addr in) fait la conversion inverse.
 \subsection{socket}
-Permet d'initialiser le socket
+Permet d'initialiser le socket:
 \begin{lstlisting}
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -1240,11 +1240,9 @@ Bind permet d'associer un socket avec un numéro de port sur la machine locale. 
 int bind(int sockfd, struct sockaddr *my_addr, int addrlen);
 \end{lstlisting}
 \begin{enumerate}
-  \item Le premier paramètre est le socket descriptor renvoyé par
-socket().
-  \item Le second contient le port de l'adresse IP de la machine locale. (soit 0, et l'OS le choisis au hasard soit un nombre compris entre 1024 et 65535 qui n'est pas déjà utilisé).
-  \item Quant au troisième paramètre, on peut le mettre à
-sizeof(struct sockaddr). La constante INADDR\textunderscore{}ANY pour l'adresse IP symbolise l'adresse de la machine locale.
+  \item Le premier paramètre est le socket descriptor renvoyé par socket().
+  \item Le second contient le port de l'adresse IP de la machine locale (soit 0, et l'OS le choisit au hasard soit un nombre compris entre 1024 et 65535 qui n'est pas déjà utilisé).
+  \item Quant au troisième paramètre, on peut le mettre à sizeof(struct sockaddr). La constante INADDR\textunderscore{}ANY pour l'adresse IP symbolise l'adresse de la machine locale.
 \end{enumerate}
 Deux appels successifs à bind() peuvent entraîner des délais d'attente (environ 1 minute) et un message d'erreur. On peut s'en débarrasser grâce à la fonction setsockopt():
 \begin{lstlisting}
@@ -1260,11 +1258,9 @@ Connect permet de se connecter à un ordinateur distant:
 int connect(int sockfd, struct sockaddr *serv_addr ,int addrlen);
 \end{lstlisting}
 \begin{enumerate}
-  \item Le premier paramètre est le socket descriptor renvoyé par
-socket().
+  \item Le premier paramètre est le socket descriptor renvoyé par socket().
   \item Le second contient le port de l'adresse IP de la machine distante (et non locale comme dans le bind, sinon, le reste c'est comme le bind). (soit 0, et l'OS le choisis au hasard soit un nombre compris entre 1024 et 65535 qui n'est pas déjà utilisé).
-  \item Quant au troisième paramètre, on peut le mettre à
-sizeof(struct sockaddr). La constante INADDR\textunderscore{}ANY pour l'adresse IP symbolise l'adresse de la machine locale.
+  \item Quant au troisième paramètre, on peut le mettre à sizeof(struct sockaddr). La constante INADDR\textunderscore{}ANY pour l'adresse IP symbolise l'adresse de la machine locale.
 \end{enumerate}
 Un appel à connect() doit toujours être précédé d'un appel à socket(), mais pas forcément d'un appel à bind(). En cas d'absence d'appel à bind(), un numéro de port sera assigné automatiquement à notre socket.
 \subsection{listen}
@@ -1278,7 +1274,7 @@ int listen(int sockfd, int backlog);
 \end{enumerate}
 Il convient de faire un bind() avant un listen(), sinon le kernel nous associera un port aléatoire, ce qui posera problème ici (connexions distantes).
 \subsection{accept}
-Des ordinateurs distants vont à présent essayer de se connecter sur notre machine à un port sur lequel nous écoutons (grâce à listen()). Leurs demandes de connexions seront mises en file d'attente jusqu'à ce que nous les acceptions (une à la fois), par accept():
+Des ordinateurs distants vont à présent essayer de se connecter sur notre machine à un port sur lequel nous écoutons (grâce à listen()). Leur demande de connexion sera mise en file d'attente jusqu'à ce que nous les acceptions (une à la fois), par accept():
 \begin{lstlisting}
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -1292,15 +1288,15 @@ int accept(int s, struct sockaddr *addr, int *addrlen);
 \end{enumerate}
 accept() renvoie un nouveau socket desccriptor qui devra dorénavant être utilisé pour toutes les communications avec la machine qui vient de se connecter.
 \subsection{send}
-Send permet d'envoyer des informations à un ordinateur distant au travers du socket descriptor associé à la connexion établie avec cet ordinateur
+send() permet d'envoyer des informations à un ordinateur distant au travers du socket descriptor associé à la connexion établie avec cet ordinateur:
 \begin{lstlisting}
 int send(int sackfd, const void *msg, int len, int flag);
 \end{lstlisting}
 \begin{enumerate}
-  \item Le premier paramètre est le socket descriptor renvoyé par socket()
-  \item Le deuxième paramètre contient l'information à envoyer.
-  \item Le troisième contient sa longueur.
-  \item Le quatrième peut être mis à 0 
+  \item Le premier paramètre est le socket descriptor renvoyé par socket();
+  \item Le deuxième paramètre contient l'information à envoyer;
+  \item Le troisième contient sa longueur;
+  \item Le quatrième peut être mis à 0.
 \end{enumerate}
 send() renvoie le nombre de bytes envoyés. En fait, send() envoie le maximum de données possible, mais cela peut encore être inférieur à len. Il faudra alors ré-envoyer le reste.
 \subsection{recv}
@@ -1309,10 +1305,10 @@ Recv permet de recevoir des informations envoyées par un ordinateur distant au 
 int recv(int sockfd, void *buf, int len, unsigned int flags);
 \end{lstlisting}
 \begin{enumerate}
-  \item Le premier paramètre est le socket descriptor renvoyé par socket()
-  \item Le deuxième paramètre est un vecteur qui contiendra l'information lue.
-  \item Le troisième contient sa longueur.
-  \item Le quatrième peut être mis à 0 
+  \item Le premier paramètre est le socket descriptor renvoyé par socket();
+  \item Le deuxième paramètre est un vecteur qui contiendra l'information lue;
+  \item Le troisième contient sa longueur;
+  \item Le quatrième peut être mis à 0.
 \end{enumerate}
 Le comportement par défaut de recv() est d'attendre jusqu'à ce qu'une information soit disponible (lecture bloquante).\par
 recv() renvoie le nombre de bytes reçus ou 0 si la machine distante a déjà fermé son socket (à l'aide de close(int sockfd)).
@@ -1403,7 +1399,7 @@ int main(void) {
         perror("setsockopt");
         exit(1);
     }
-    
+
     my_addr.sin_family = AF_INET;         // host byte order
     my_addr.sin_port = htons(MYPORT);     // short, network byte order
     my_addr.sin_addr.s_addr = INADDR_ANY; // automatically fill with my IP
@@ -1456,22 +1452,22 @@ int main(void) {
 #include <netinet/in.h>
 #include <sys/socket.h>
 
-#define PORT 3490 // the port client will be connecting to 
+#define PORT 3490 // the port client will be connecting to
 
-#define MAXDATASIZE 100 // max number of bytes we can get at once 
+#define MAXDATASIZE 100 // max number of bytes we can get at once
 
 int main(int argc, char *argv[])
 {
-    int sockfd, numbytes;  
+    int sockfd, numbytes;
     char buf[MAXDATASIZE];
     struct hostent *he;
-    struct sockaddr_in their_addr; // connector's address information 
+    struct sockaddr_in their_addr; // connector's address information
 
     if (argc != 2) {
         fprintf(stderr,"usage: client hostname\n");
         exit(1);
     }
-    if ((he=gethostbyname(argv[1])) == NULL) {  // get the host info 
+    if ((he=gethostbyname(argv[1])) == NULL) {  // get the host info
         perror("gethostbyname");
         exit(1);
     }
@@ -1479,10 +1475,10 @@ int main(int argc, char *argv[])
         perror("socket");
         exit(1);
     }
-    their_addr.sin_family = AF_INET;    // host byte order 
-    their_addr.sin_port = htons(PORT);  // short, network byte order 
+    their_addr.sin_family = AF_INET;    // host byte order
+    their_addr.sin_port = htons(PORT);  // short, network byte order
     their_addr.sin_addr = *((struct in_addr *)he->h_addr);
-    memset(&(their_addr.sin_zero), '\0', 8);  // zero the rest of the struct 
+    memset(&(their_addr.sin_zero), '\0', 8);  // zero the rest of the struct
 
     if (connect(sockfd, (struct sockaddr *)&their_addr, sizeof(struct sockaddr)) == -1) {
         perror("connect");
@@ -1540,12 +1536,12 @@ Exemple de select seul: (Tp)
 #include <unistd.h>
 
 int main() {
-  fd_set read_set; 
+  fd_set read_set;
   struct timeval timeout;
 
   FD_SET(STDIN_FILENO, &read_set);
   timeout.tv_sec = 3;  // attend 3 secondes
-  timeout.tv_usec = 0;  
+  timeout.tv_usec = 0;
   select(STDIN_FILENO + 1, &read_set, NULL, NULL, &timeout); //
 
   if (FD_ISSET(STDIN_FILENO, &read_set)) { // attend une entrée au clavier
